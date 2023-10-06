@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'RemBudget.dart';
 
 class badyetHome extends StatelessWidget {
   const badyetHome({super.key});
@@ -18,12 +19,13 @@ class badyetHome extends StatelessWidget {
         child: Container(
           margin: EdgeInsets.only(top: 100.0), // Adjust the value as needed
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
 
               Row(
                 children: <Widget>[
-                  Container(
+                  Container(                    
                     margin: EdgeInsets.only(left: 20.0, right: 20.0),
                     height: 40,
                     width: 40,
@@ -58,21 +60,26 @@ class badyetHome extends StatelessWidget {
                     
                     ]
                   )
+            
                   
 
                   
                 ],
-              )
               
+              ),
               
+  
 
               
 
               // Other widgets in your Column
+            RemBudget(),  
             ],
           ),
         ),
+        
       )
+      
     );
 
   }
