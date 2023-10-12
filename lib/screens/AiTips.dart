@@ -5,29 +5,61 @@ class AiTips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 230,
-      margin: EdgeInsets.only(left: 30),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
-          color: Colors.transparent,
-          alignment: Alignment.center, // To center the content
-          child: Container(            
-            height: 100,
-            width: 230,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.green, width: 2), // Green border
-              borderRadius: BorderRadius.circular(30),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Container(
+          height: 100,
+          width: 230,
+          margin: EdgeInsets.only(left: 30),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Container(
+              color: Colors.transparent,
+              alignment: Alignment.center, // To center the content
+              child: Container(
+                height: 100,
+                width: 230,
+                decoration: BoxDecoration(
+                  border:
+                      Border.all(color: Colors.green, width: 2), // Green border
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  """You can make money""",
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
-            child: Text (  
-              """You can make money""",
-              textAlign: TextAlign.center,
-            ) ,
           ),
         ),
-      ),
+        Container(
+          margin: EdgeInsets.only(right: 30),
+          height: 100,
+          width: 110,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: const Color.fromRGBO(81, 218, 96, 1),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+  
+            children: [
+              
+              Icon(
+                Icons.check,
+                color: Colors.white,
+                size: 20,
+              ),
+              Text(
+                "You're In Budget!",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 14, ),
+              )
+            ],
+          ),
+        )
+      ],
     );
   }
 }
