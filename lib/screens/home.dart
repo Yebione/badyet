@@ -1,3 +1,4 @@
+import 'package:badyet/screens/AiTips.dart';
 import 'package:badyet/screens/Header.dart';
 import 'package:badyet/screens/RemBudget.dart';
 import 'package:badyet/screens/AddButton.dart';
@@ -16,17 +17,18 @@ class badyetHome extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Header(), //for Header 
+              Header(), //for Header
               RemBudget(),
+              AiTips(),
             ],
           ),
         ),
       ),
-     
-      floatingActionButton: AddExpenseButton(), // For Add Expense Button
+
+      floatingActionButton: AddExpenseButton(),
+      // For Add Expense Button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavbar(), // For Bottom Navigation
-
     );
   }
 }
