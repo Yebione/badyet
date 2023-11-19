@@ -24,7 +24,7 @@ class AiTips extends StatelessWidget {
                 width: 230,
                 decoration: BoxDecoration(
                   border:
-                      Border.all(color: Colors.green, width: 2), // Green border
+                      Border.all(color: Colors.green, width: 4), // Green border
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
