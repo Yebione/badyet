@@ -14,12 +14,18 @@ class BottomNavbar extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.history,
-              color: Colors.black,
-            ),
-            onPressed: () {},
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.history,
+                  color: Colors.black,
+                ),
+                onPressed: () {},
+              ),
+              Text("History"),
+            ],
           ),
           IconButton(
             icon: Icon(
