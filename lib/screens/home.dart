@@ -13,6 +13,41 @@ class badyetHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Ex_6-7"),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.grey[850]
+              ),
+              child: Text(
+                'Excercise 6-7',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('Settings'),
+              onTap: () {
+                Navigator.pushNamed(context, '/settings');
+              },
+            ),
+            ListTile(
+              title: Text('About'),
+              onTap: () {
+                Navigator.pushNamed(context, '/about');
+              },
+            ),
+            // Add more ListTile widgets for additional items
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -69,9 +104,8 @@ class badyetHome extends StatelessWidget {
         ),
       ),
       floatingActionButton: AddExpenseButton(),
-      // For Add Expense Button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavbar(), // For Bottom Navigation
+      bottomNavigationBar: BottomNavbar(),
     );
   }
 }
