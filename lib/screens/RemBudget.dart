@@ -7,8 +7,9 @@ class RemBudget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Container(
+          
           alignment: Alignment.center,
-          margin: EdgeInsets.all(30),
+          margin: EdgeInsets.only(top: 30, left: 30, right: 30, bottom: 15),
           padding: EdgeInsets.only(left: 30.0, top: 27.0),
           height: 130,
           width: 365,
@@ -42,7 +43,7 @@ class RemBudget extends StatelessWidget {
             child: Text(
              'PHP 150.00',
               style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               color: Color.fromARGB(255, 255, 255, 255),
               fontSize: 40
              ),

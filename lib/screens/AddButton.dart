@@ -11,6 +11,7 @@ class AddExpenseButton extends StatelessWidget {
         backgroundColor: Colors.transparent,
         shape: CircleBorder(eccentricity: 0.0),
         child: Container(
+
           width: 80,
           height: 80,
           child: Icon(
