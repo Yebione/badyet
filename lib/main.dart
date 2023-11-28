@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(     
-<<<<<<< HEAD
+
       title: 'Badyet',
       routes: {
         '/settings': (BuildContext ctx) => SettingsPage(),
@@ -23,9 +23,8 @@ class MyApp extends StatelessWidget {
         '/history': (BuildContext ctx) => HistoryPage(),
       
       },
-=======
-      title: 'Flutter Demo',
->>>>>>> main
+
+
       theme: ThemeData(
         // This is the theme of your application.
         //
