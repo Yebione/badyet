@@ -22,9 +22,12 @@ class BottomNavbar extends StatelessWidget {
                   Icons.history,
                   color: Colors.black,
                 ),
-                onPressed: () {},
+
+                onPressed: () {
+                  Navigator.pushNamed(context, '/history');
+                },
               ),
-              Text("History"),
+            
             ],
           ),
           IconButton(
@@ -32,7 +35,9 @@ class BottomNavbar extends StatelessWidget {
               Icons.settings,
               color: Colors.black,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+            },
           ),
         ],
       ),

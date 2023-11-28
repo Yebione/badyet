@@ -1,4 +1,4 @@
-import 'package:badyet/screens/ExpenseItem.dart';
+import 'package:badyet/widgets/ExpenseItem.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseContainer extends StatelessWidget {

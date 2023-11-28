@@ -1,5 +1,8 @@
+import 'package:badyet/screens/History.dart';
 import 'package:badyet/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:badyet/screens/Settings.dart';
+import 'package:badyet/screens/About.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +15,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(     
-      title: 'Flutter Demo',
+
+      title: 'Badyet',
+      routes: {
+        '/settings': (BuildContext ctx) => SettingsPage(),
+        '/about': (BuildContext ctx) => AboutPage(),
+        '/history': (BuildContext ctx) => HistoryPage(),
+      
+      },
+
+
       theme: ThemeData(
         // This is the theme of your application.
         //
