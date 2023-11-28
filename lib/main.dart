@@ -1,3 +1,4 @@
+import 'package:badyet/screens/History.dart';
 import 'package:badyet/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:badyet/screens/Settings.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/settings': (BuildContext ctx) => SettingsPage(),
         '/about': (BuildContext ctx) => AboutPage(),
+        '/history': (BuildContext ctx) => HistoryPage(),
       
       },
       theme: ThemeData(
