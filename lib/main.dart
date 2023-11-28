@@ -15,6 +15,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(     
+<<<<<<< HEAD
+=======
+
+>>>>>>> f771542 (merge conflict resolved)
       title: 'Badyet',
       routes: {
         '/settings': (BuildContext ctx) => SettingsPage(),
@@ -22,6 +26,11 @@ class MyApp extends StatelessWidget {
         '/history': (BuildContext ctx) => HistoryPage(),
       
       },
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> f771542 (merge conflict resolved)
       theme: ThemeData(
         // This is the theme of your application.
         //

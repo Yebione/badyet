@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import 'package:badyet/screens/AiTips.dart';
 import 'package:badyet/screens/Header.dart';
 import 'package:badyet/screens/HomeExpenseView.dart';
@@ -6,6 +7,9 @@ import 'package:badyet/screens/RemBudget.dart';
 import 'package:badyet/screens/AddButton.dart';
 import 'package:badyet/screens/BottomNavbar.dart';
 =======
+=======
+
+>>>>>>> f771542 (merge conflict resolved)
 import 'package:badyet/widgets/AiTips.dart';
 import 'package:badyet/widgets/ExpenseItem.dart';
 import 'package:badyet/widgets/Header.dart';
@@ -13,7 +17,11 @@ import 'package:badyet/widgets/HomeExpenseView.dart';
 import 'package:badyet/widgets/RemBudget.dart';
 import 'package:badyet/widgets/AddButton.dart';
 import 'package:badyet/widgets/BottomNavbar.dart';
+<<<<<<< HEAD
 >>>>>>> 650d1f7 (moved widgets into a widgets folder)
+=======
+
+>>>>>>> f771542 (merge conflict resolved)
 import 'package:flutter/material.dart';
 
 class badyetHome extends StatelessWidget {
@@ -22,6 +30,7 @@ class badyetHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       body: Center(
@@ -73,6 +82,8 @@ class badyetHome extends StatelessWidget {
 =======
      
 >>>>>>> 650d1f7 (moved widgets into a widgets folder)
+=======
+>>>>>>> f771542 (merge conflict resolved)
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -131,8 +142,16 @@ class badyetHome extends StatelessWidget {
       ),
 
       floatingActionButton: AddExpenseButton(),
+<<<<<<< HEAD
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavbar(),
+=======
+
+      // For Add Expense Button
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNavbar(), // For Bottom Navigation
+
+>>>>>>> f771542 (merge conflict resolved)
     );
   }
 }

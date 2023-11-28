@@ -22,6 +22,10 @@ class BottomNavbar extends StatelessWidget {
                   Icons.history,
                   color: Colors.black,
                 ),
+<<<<<<< HEAD
+=======
+
+>>>>>>> f771542 (merge conflict resolved)
                 onPressed: () {
                   Navigator.pushNamed(context, '/history');
                 },
