@@ -1,10 +1,10 @@
-import 'package:badyet/screens/AiTips.dart';
-import 'package:badyet/screens/ExpenseItem.dart';
-import 'package:badyet/screens/Header.dart';
-import 'package:badyet/screens/HomeExpenseView.dart';
-import 'package:badyet/screens/RemBudget.dart';
-import 'package:badyet/screens/AddButton.dart';
-import 'package:badyet/screens/BottomNavbar.dart';
+import 'package:badyet/widgets/AiTips.dart';
+import 'package:badyet/widgets/ExpenseItem.dart';
+import 'package:badyet/widgets/Header.dart';
+import 'package:badyet/widgets/HomeExpenseView.dart';
+import 'package:badyet/widgets/RemBudget.dart';
+import 'package:badyet/widgets/AddButton.dart';
+import 'package:badyet/widgets/BottomNavbar.dart';
 import 'package:flutter/material.dart';
 
 class badyetHome extends StatelessWidget {
@@ -13,41 +13,7 @@ class badyetHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Ex_6-7"),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.grey[850]
-              ),
-              child: Text(
-                'Excercise 6-7',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text('Settings'),
-              onTap: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-            ListTile(
-              title: Text('About'),
-              onTap: () {
-                Navigator.pushNamed(context, '/about');
-              },
-            ),
-            // Add more ListTile widgets for additional items
-          ],
-        ),
-      ),
+     
       body: SingleChildScrollView(
         child: Center(
           child: Container(
