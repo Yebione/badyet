@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import 'package:badyet/screens/AiTips.dart';
 import 'package:badyet/screens/Header.dart';
 import 'package:badyet/screens/HomeExpenseView.dart';
@@ -10,6 +11,9 @@ import 'package:badyet/screens/BottomNavbar.dart';
 =======
 
 >>>>>>> f771542 (merge conflict resolved)
+=======
+
+>>>>>>> 825662952b6b326e129fd05e42c4264565b4bbcb
 import 'package:badyet/widgets/AiTips.dart';
 import 'package:badyet/widgets/ExpenseItem.dart';
 import 'package:badyet/widgets/Header.dart';
@@ -18,10 +22,14 @@ import 'package:badyet/widgets/RemBudget.dart';
 import 'package:badyet/widgets/AddButton.dart';
 import 'package:badyet/widgets/BottomNavbar.dart';
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 650d1f7 (moved widgets into a widgets folder)
 =======
 
 >>>>>>> f771542 (merge conflict resolved)
+=======
+
+>>>>>>> 825662952b6b326e129fd05e42c4264565b4bbcb
 import 'package:flutter/material.dart';
 
 class badyetHome extends StatelessWidget {
@@ -143,15 +151,21 @@ class badyetHome extends StatelessWidget {
 
       floatingActionButton: AddExpenseButton(),
 <<<<<<< HEAD
+<<<<<<< HEAD
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavbar(),
 =======
+=======
+>>>>>>> 825662952b6b326e129fd05e42c4264565b4bbcb
 
       // For Add Expense Button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavbar(), // For Bottom Navigation
 
+<<<<<<< HEAD
 >>>>>>> f771542 (merge conflict resolved)
+=======
+>>>>>>> 825662952b6b326e129fd05e42c4264565b4bbcb
     );
   }
 }

@@ -23,9 +23,13 @@ class BottomNavbar extends StatelessWidget {
                   color: Colors.black,
                 ),
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> f771542 (merge conflict resolved)
+=======
+
+>>>>>>> 825662952b6b326e129fd05e42c4264565b4bbcb
                 onPressed: () {
                   Navigator.pushNamed(context, '/history');
                 },

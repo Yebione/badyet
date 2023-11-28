@@ -16,9 +16,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(     
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 >>>>>>> f771542 (merge conflict resolved)
+=======
+
+>>>>>>> 825662952b6b326e129fd05e42c4264565b4bbcb
       title: 'Badyet',
       routes: {
         '/settings': (BuildContext ctx) => SettingsPage(),
@@ -27,10 +31,15 @@ class MyApp extends StatelessWidget {
       
       },
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 
 >>>>>>> f771542 (merge conflict resolved)
+=======
+
+
+>>>>>>> 825662952b6b326e129fd05e42c4264565b4bbcb
       theme: ThemeData(
         // This is the theme of your application.
         //
