@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'package:badyet/widgets/AiTips.dart';
 import 'package:badyet/widgets/ExpenseItem.dart';
 import 'package:badyet/widgets/Header.dart';
@@ -5,6 +6,15 @@ import 'package:badyet/widgets/HomeExpenseView.dart';
 import 'package:badyet/widgets/RemBudget.dart';
 import 'package:badyet/widgets/AddButton.dart';
 import 'package:badyet/widgets/BottomNavbar.dart';
+=======
+import 'package:badyet/screens/AiTips.dart';
+import 'package:badyet/screens/ExpenseItem.dart';
+import 'package:badyet/screens/Header.dart';
+import 'package:badyet/screens/HomeExpenseView.dart';
+import 'package:badyet/screens/RemBudget.dart';
+import 'package:badyet/screens/AddButton.dart';
+import 'package:badyet/screens/BottomNavbar.dart';
+>>>>>>> main
 import 'package:flutter/material.dart';
 
 class badyetHome extends StatelessWidget {
@@ -13,7 +23,10 @@ class badyetHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
      
+=======
+>>>>>>> main
       body: SingleChildScrollView(
         child: Center(
           child: Container(
@@ -70,8 +83,14 @@ class badyetHome extends StatelessWidget {
         ),
       ),
       floatingActionButton: AddExpenseButton(),
+<<<<<<< HEAD
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavbar(),
+=======
+      // For Add Expense Button
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNavbar(), // For Bottom Navigation
+>>>>>>> main
     );
   }
 }

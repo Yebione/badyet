@@ -22,11 +22,17 @@ class BottomNavbar extends StatelessWidget {
                   Icons.history,
                   color: Colors.black,
                 ),
+<<<<<<< HEAD:lib/widgets/BottomNavbar.dart
                 onPressed: () {
                   Navigator.pushNamed(context, '/history');
                 },
               ),
             
+=======
+                onPressed: () {},
+              ),
+              Text("History"),
+>>>>>>> main:lib/screens/BottomNavbar.dart
             ],
           ),
           IconButton(
