@@ -1,4 +1,3 @@
-
 import 'package:badyet/widgets/AiTips.dart';
 import 'package:badyet/widgets/ExpenseItem.dart';
 import 'package:badyet/widgets/Header.dart';
@@ -9,9 +8,14 @@ import 'package:badyet/widgets/BottomNavbar.dart';
 
 import 'package:flutter/material.dart';
 
-class badyetHome extends StatelessWidget {
+class badyetHome extends StatefulWidget {
   const badyetHome({super.key});
 
+  @override
+  State<badyetHome> createState() => _badyetHome();
+}
+
+class _badyetHome extends State<badyetHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,7 +79,6 @@ class badyetHome extends StatelessWidget {
       // For Add Expense Button
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavbar(), // For Bottom Navigation
-
     );
   }
 }
