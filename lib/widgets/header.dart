@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Header extends StatelessWidget {
-  const Header({super.key});
-  
+  const Header({Key? key});
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -13,61 +15,65 @@ class Header extends StatelessWidget {
           Row(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                height: 40,
-                width: 40,
+                
+                height: screenWidth / 10,
+                width: screenWidth / 10,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Image.asset('assets/images/avatar.jpg'),
                 ),
               ),
+
+              SizedBox(width: 20,),
               Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Today is Thursday',
-                      style: TextStyle(
-                          color: Colors.green[400],
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.left,
-                      // Text properties here
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Today is Thursday',
+                    style: GoogleFonts.poppins(
+                      color: Colors.green[400],
+                      fontSize: screenWidth * 0.045,
+                      fontWeight: FontWeight.w700,
                     ),
-                    Text(
-                      'September 11',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal),
-                      textAlign: TextAlign.left,
-                      // Text properties here
+                    textAlign: TextAlign.left,
+                  ),
+                  Text(
+                    'September 11',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: screenWidth * 0.035,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: GoogleFonts.poppins().fontFamily,
                     ),
-                  ]),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
             ],
           ),
           Container(
-            margin: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: TextButton(
-              onPressed: () {
-                // Your button's action goes here
-              },
-
-              style: TextButton.styleFrom(
-                primary: Colors.grey.shade300, // Text color
-                padding: EdgeInsets.only(top:0.5 , bottom: 0.5, right: 16, left: 16), // Padding around the text
-                textStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Roboto' // Set the font weight to bold
+            padding: EdgeInsets.all(
+               screenWidth * 0.001),
+            child: Container(
+              // Adjust the maximum width as needed
+              child: TextButton(
+                onPressed: () {
+                  // Your button's action goes here
+                },
+                style: TextButton.styleFrom(
+                  primary: Colors.grey.shade300,
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  textStyle: GoogleFonts.poppins(
+                    fontSize: screenWidth * 0.029,
+                    fontWeight: FontWeight.w500,                    
+                  ),
+                  backgroundColor: Colors.grey.shade700,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                 ),
-                // Text style
-                backgroundColor: Colors.grey.shade700, // Background color
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      30), // Adjust the value to control corner radius
-                ),
+                child: Text("HELP"),
               ),
-              child: Text("HELP"), // Text displayed on the button
             ),
           ),
         ],

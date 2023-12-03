@@ -1,16 +1,20 @@
 import 'package:badyet/widgets/ExpenseItem.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class ExpenseContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    String test = "PHP 290.00";
     return Container(
-      margin: EdgeInsets.all(30),
+      margin: EdgeInsets.only(top: 35),
       padding: EdgeInsets.only(top: 30, left: 30, right: 35),
-      width: 365,
+      width: screenWidth,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Color.fromARGB(204, 196, 196, 196),
+        color: Color.fromARGB(71, 192, 192, 192),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -25,30 +29,25 @@ class ExpenseContainer extends StatelessWidget {
                   children: [
                     Text(
                       "Expenses Today",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           color: Colors.grey[850],
-                          fontSize: 20,
+                          fontSize: screenWidth / 22,
                           fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "PHP 290.00",
+                      test,
                       textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.grey[850]),
+                      style: GoogleFonts.poppins(
+                          color: Colors.grey[850], fontSize: screenWidth / 24),
                     ),
                   ],
                 ),
-                Container(
-                  width: 26.0,
-                  height: 26.0,
-                  padding: EdgeInsets.all(1),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.grey[850]),
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                    size: 15,
-                  ),
-                )
+                IconButton(
+                    icon: Icon(
+                      Icons.add_circle_rounded,
+                      size: screenWidth * 0.07,
+                    ),
+                    onPressed: () {}),
               ],
             ),
           ),
@@ -62,11 +61,7 @@ class ExpenseContainer extends StatelessWidget {
           ExpenseItem(),
           ExpenseItem(),
           ExpenseItem(),
-          ExpenseItem(),
-          ExpenseItem(),
-          ExpenseItem(),
-          ExpenseItem(),
-          ExpenseItem(),
+          
         ],
       ),
     );

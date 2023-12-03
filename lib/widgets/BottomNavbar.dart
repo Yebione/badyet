@@ -5,40 +5,40 @@ class BottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return BottomAppBar(
-      //bottom navigation bar on scaffold
-      color: const Color.fromRGBO(233, 233, 233, 1),
-      //shape of notch
-      notchMargin: 5,
+      padding: EdgeInsets.only(
+        bottom: screenWidth * 0.02,
+      ),
+      height: screenWidth / 5.8,
+      color: Colors.white54,
+      shape: CircularNotchedRectangle(),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.history,
-                  color: Colors.black,
-                ),
-
-                onPressed: () {
-                  Navigator.pushNamed(context, '/history');
-                },
-              ),
-            
-            ],
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          IconButton(
+              onPressed: () {Navigator.pushNamed(
+                  context,
+                  '/history',
+                );},
+              icon: Icon(
+                Icons.history,
+                size: screenWidth * 0.07,
+              )),
+          SizedBox(
+            width: screenWidth / 3.5,
           ),
           IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pushNamed(context, '/settings');
-            },
-          ),
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  '/settings',
+                );
+              },
+              icon: Icon(
+                Icons.settings,
+                size: screenWidth * 0.07,
+              )),
         ],
       ),
     );
