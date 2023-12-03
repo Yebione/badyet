@@ -1,8 +1,22 @@
+import 'dart:js_util';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AddExpenseButton extends StatelessWidget {
   const AddExpenseButton({super.key});
+
+  @override
+  State<AddExpenseButton> createState() => _AddExpenseButton();
+}
+
+class _AddExpenseButton extends State<AddExpenseButton> {
+  final addBudgetController = TextEditingController();
+
+  @override
+  void dispose() {
+    addBudgetController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
