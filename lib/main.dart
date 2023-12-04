@@ -1,4 +1,5 @@
 import 'package:badyet/screens/History.dart';
+import 'package:badyet/screens/HistoryScaf.dart';
 import 'package:badyet/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:badyet/screens/Settings.dart';
@@ -15,21 +16,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(     
-
+    return MaterialApp(
       title: 'Badyet',
       routes: {
         '/settings': (BuildContext ctx) => SettingsPage(),
         '/about': (BuildContext ctx) => AboutPage(),
         '/history': (BuildContext ctx) => HistoryPage(),
-      
+        '/historytemp': (BuildContext ctx) => MyHistoryPage(),
       },
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
       ),
-
       debugShowCheckedModeBanner: false,
       home: const badyetHome(),
     );

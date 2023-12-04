@@ -17,10 +17,12 @@ class BottomNavbar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           IconButton(
-              onPressed: () {Navigator.pushNamed(
+              onPressed: () {
+                Navigator.pushNamed(
                   context,
-                  '/history',
-                );},
+                  '/historytemp',
+                );
+              },
               icon: Icon(
                 Icons.history,
                 size: screenWidth * 0.07,
