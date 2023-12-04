@@ -5,8 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:badyet/screens/Settings.dart';
 import 'package:badyet/screens/About.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  //Hive.registerAdapter(ExpenseItemClassAdapter());
+  var _budget = await Hive.openBox('Budget');
   runApp(const MyApp());
 }
 
