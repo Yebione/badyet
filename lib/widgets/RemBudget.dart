@@ -41,7 +41,7 @@ class RemBudget extends StatelessWidget {
                 ),
               ),
               Text(
-                '₱ 999999.00',
+                'PHP 999.00',
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,

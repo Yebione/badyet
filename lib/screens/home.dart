@@ -23,46 +23,44 @@ class _badyetHome extends State<badyetHome> {
     double screenWidth = MediaQuery.of(context).size.width;
     double decider = 2;
     return Scaffold(
-          body: SingleChildScrollView(
-            child: Center(
-              child: Builder(
-                builder: (BuildContext context) {
-                  double screenWidth = MediaQuery.of(context).size.width;
-                  double decider = 2;
-            
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: screenWidth * 0.07,
-                            right: screenWidth * 0.07,
-                            top: 50),
-                        child: Column(
-                          children: [
-                            Header(),
-                            SizedBox(
-                              height: 40,
-                            ),
-                            RemBudget(),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            budgetBar(),
-                            decider == 1 ? noExpense() : ExpenseContainer(),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-          floatingActionButtonLocation:FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: AddExpenseButton (),
-          bottomNavigationBar: BottomNavbar(),
-        
-        );
+      body: SingleChildScrollView(
+        child: Center(
+          child: Builder(
+            builder: (BuildContext context) {
+              double screenWidth = MediaQuery.of(context).size.width;
+              double decider = 2;
 
+              return Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: screenWidth * 0.07,
+                        right: screenWidth * 0.07,
+                        top: 70),
+                    child: Column(
+                      children: [
+                        Header(),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        RemBudget(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        budgetBar(),
+                        decider == 1 ? noExpense() : ExpenseContainer(),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: AddExpenseButton(),
+      bottomNavigationBar: BottomNavbar(),
+    );
   }
 }
