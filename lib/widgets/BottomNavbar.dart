@@ -20,7 +20,7 @@ class BottomNavbar extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(
                   context,
-                  '/historytemp',
+                  '/history',
                 );
               },
               icon: Icon(

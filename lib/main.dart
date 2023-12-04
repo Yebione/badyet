@@ -26,8 +26,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/settings': (BuildContext ctx) => SettingsPage(),
         '/about': (BuildContext ctx) => AboutPage(),
-        '/history': (BuildContext ctx) => HistoryPage(),
-        '/historytemp': (BuildContext ctx) => MyHistoryPage(),
+        '/history': (BuildContext ctx) => MyHistoryPage(),
+        // '/historytemp': (BuildContext ctx) => MyHistoryPage(),
       },
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(

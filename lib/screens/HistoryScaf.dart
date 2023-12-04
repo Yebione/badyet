@@ -1,5 +1,5 @@
 // my_history_page.dart
-
+import 'dart:developer' as developer;
 import 'package:badyet/widgets/ExpenseItem.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +10,7 @@ class MyHistoryPage extends StatefulWidget {
 }
 
 class _MyHistoryPageState extends State<MyHistoryPage> {
-  double _blueContainerTopMargin = 0.0;
+  double _blueContainerTopMargin = 50.0;
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +18,8 @@ class _MyHistoryPageState extends State<MyHistoryPage> {
     return Scaffold(
       body: Stack(
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/settings',
-              );
-            },
-            child: Container(
+
+        Container(
               height: MediaQuery.of(context).size.height / 2 - 10,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -40,88 +34,8 @@ class _MyHistoryPageState extends State<MyHistoryPage> {
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              left: screenWidth * 0.07,
-              right: screenWidth * 0.07,
-              top: 50,
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.white,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                          "History",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/settings',
-                        );
-                      },
-                      icon: Icon(
-                        Icons.settings,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 45),
-                Row(
-                  children: [
-                    Text(
-                      'SEPTEMBER EXPENSES',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: 17,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'PHP 9999.99',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.11,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          
+
           SingleChildScrollView(
             child: Column(
               children: [
@@ -183,7 +97,7 @@ class _MyHistoryPageState extends State<MyHistoryPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "September 02, 2023",
+                                "September 04, 2023",
                                 style: GoogleFonts.poppins(
                                     fontSize: 15, fontWeight: FontWeight.w500),
                               ),
@@ -235,6 +149,84 @@ class _MyHistoryPageState extends State<MyHistoryPage> {
                       ),
                       // Add more widgets as needed
                     ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              left: screenWidth * 0.07,
+              right: screenWidth * 0.07,
+              top: 50,
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          "History",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/settings',
+                        );
+                      },
+                      color: Colors.white,
+                      icon: Icon(
+                        Icons.settings,
+                      
+                      )),
+                  ],
+                ),
+                SizedBox(height: 45),
+                Row(
+                  children: [
+                    Text(
+                      'SEPTEMBER EXPENSES',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontSize: 17,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'PHP 9999.99',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      fontSize: screenWidth * 0.11,
+                    ),
                   ),
                 ),
               ],
