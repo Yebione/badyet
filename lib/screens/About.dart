@@ -3,159 +3,211 @@
 
 import 'package:flutter/material.dart';
 
- Widget buildSettingItem({required IconData icon, required String name, required Widget button}) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(name),
-      trailing: button,
-    );
-  }
-
-
 class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('About'),
+  Widget build(BuildContext context) => Scaffold(
+    extendBodyBehindAppBar: true,
+    appBar: AppBar(
+      title: Text('About'),
+      titleTextStyle: TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 18,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      centerTitle: false,
+      leading: BackButton(),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    ),
+    
+    body: Center(
+      child: Container(
+        margin: EdgeInsets.only(top: 80.0, left: 10, right: 10),
+        padding:EdgeInsets.only(left: 30, right: 30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              'MaShaKyJa Solutions\n\n'
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-              textAlign: TextAlign.start,
-              style: TextStyle(fontSize: 16),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+
+              children: <Widget>[
+                Flexible(
+                child: Text('Mashakyja Solutions is a dedicated group of students specializing in the design and development of innovative apps. With a commitment to excellence, they consistently push the boundaries of app development, delivering cutting-edge solutions that reflect both user-centric design and robust functionality.\n\nMeet the team:\n',
+                textAlign: TextAlign.justify,
+                style: TextStyle(
+                  fontSize: 11
+                  ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
+
+
+          //Kyle
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage('assets/images/avatar.jpg'), // Replace with your image asset
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Project Leader: Kyle Billones',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Image.asset('assets/images/kyle.png', height: 60, width: 60),
+                
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: <TextSpan> [
+                      TextSpan(
+                        text: '   Kyle E. Billones\n',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    TextSpan(
+                      text: '    Project Manager',
+                      style: TextStyle(
+                        fontSize: 11,
+                      ),
                     ),
-                    Text(
-                      'I like to lead a project',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                )
               ],
-              
             ),
+
+            SizedBox(width: 35),
+
+
+          //Matt
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage('assets/images/avatar.jpg'), // Replace with your image asset
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Project Leader: Kyle Billones',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Image.asset('assets/images/matt.png', height: 60, width: 60),
+                
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: <TextSpan> [
+                      TextSpan(
+                        text: '   Matthew Ariel A. Enarle\n',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    TextSpan(
+                      text: '    Analyst',
+                      style: TextStyle(
+                        fontSize: 11,
+                      ),
                     ),
-                    Text(
-                      'I like to lead a project',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                )
               ],
-              
             ),
+
+            SizedBox(width: 35),
+
+
+          //Lecx
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage('assets/images/avatar.jpg'), // Replace with your image asset
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Project Leader: Kyle Billones',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Image.asset('assets/images/lecx.png', height: 60, width: 60),
+                
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: <TextSpan> [
+                      TextSpan(
+                        text: '   Alecxander Jamille Andaya\n',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    TextSpan(
+                      text: '    Software Developer',
+                      style: TextStyle(
+                        fontSize: 11,
+                      ),
                     ),
-                    Text(
-                      'I like to lead a project',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                )
               ],
-              
             ),
+            
+            SizedBox(width: 35),
+
+
+          //Sheyn
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage('assets/images/avatar.jpg'), // Replace with your image asset
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Project Leader: Kyle Billones',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Image.asset('assets/images/sheyn.png', height: 60, width: 60),
+                
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: <TextSpan> [
+                      TextSpan(
+                        text: '   Shayne B. Yanson\n',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    TextSpan(
+                      text: '    UI/UX Designer',
+                      style: TextStyle(
+                        fontSize: 11,
+                      ),
                     ),
-                    Text(
-                      'I like to lead a project',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                )
               ],
-              
             ),
+            
+            SizedBox(width: 35),
+
+
+          //Jas
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: AssetImage('assets/images/avatar.jpg'), // Replace with your image asset
-                ),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Project Leader: Kyle Billones',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Image.asset('assets/images/jas.png', height: 60, width: 60),
+                
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    children: <TextSpan> [
+                      TextSpan(
+                        text: '   Jasper M. Nillos\n',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    TextSpan(
+                      text: '    QA Specialist',
+                      style: TextStyle(
+                        fontSize: 11,
+                      ),
                     ),
-                    Text(
-                      'I like to lead a project',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                )
               ],
-              
             ),
+
             
           ],
         ),
       ),
-    );
-  }
+    ),
+
+  );
+
 }

@@ -21,10 +21,8 @@ class HistoryPage extends StatelessWidget {
               icon: Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
-            SizedBox(width: 10), // adjust spacing as needed
-            Expanded(
-              child: Text('Goasdfs', textDirection: TextDirection.rtl),
-        ),
+            SizedBox(width: 10), // add some space between icon and title
+            Text('Goa', textScaleFactor: 1),
           ],
         ),
         
