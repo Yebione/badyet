@@ -1,16 +1,28 @@
-# badyetnew
+# Badyet
 
-A new Flutter project.
+**Badyet** is a mobile budgeting app designed to simplify financial management. It provides daily budget recommendations based on your weekly budget, offering a practical and user-friendly approach to tracking expenses and improving financial stability.
 
-## Getting Started
+## Features
+- **Daily Budget Recommendations**: Dynamic daily spending limits based on the weekly budget.
+- **Expense Tracking**: Log and categorize expenses for detailed analysis.
+- **Visual Insights**: Graphical representation of spending habits to aid decision-making.
+- **History**: Access past expenses and trends for better planning.
+- **Dark Mode**: A comfortable viewing option for users.
+- **Offline Access**: Manage your budget even without internet connectivity.
 
-This project is a starting point for a Flutter application.
+## Technologies Used
+- **Flutter & Dart**: Cross-platform app development.
+- **Hive**: Efficient local storage for expense data.
+- **Syncfusion**: Advanced graphing and visualization tools.
 
-A few resources to get you started if this is your first Flutter project:
+## Usage
+1. Set your weekly budget.
+2. Log daily expenses and categorize them.
+3. View daily budget recommendations and real-time updates.
+4. Analyze spending with insights and history.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Installation
+1. Download the app from the [GitHub Repository](https://github.com/Yebione/badyet).
+2. Run it using the necessary Flutter tools.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**Simplify your budgeting with Badyet!**
