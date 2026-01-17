@@ -1,22 +1,13 @@
-import 'package:badyet/widgets/HomeExpenseView.dart';
 import 'package:flutter/material.dart';
 
-class AddExpenseButton extends StatefulWidget {
+class AddExpenseButton extends StatelessWidget {
   const AddExpenseButton({super.key});
 
-  @override
-  State<AddExpenseButton> createState() => _AddExpenseButton();
-}
-
-class _AddExpenseButton extends State<AddExpenseButton> {
-  final TextEditingController controller = TextEditingController();
-  final TextEditingController addTypeController = TextEditingController();
-  final TextEditingController addPriceController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        showDialogExpense(context, addTypeController, addPriceController);
+        Navigator.pushNamed(context, '/calculator');
       },
       backgroundColor: Colors.transparent,
       shape: const CircleBorder(eccentricity: 0.0),

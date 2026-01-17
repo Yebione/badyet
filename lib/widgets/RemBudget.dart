@@ -12,7 +12,8 @@ class RemBudget extends StatefulWidget {
 }
 
 class _RemBudget extends State<RemBudget> {
-  final addBudgetController = TextEditingController();
+  final monthBudgetController = TextEditingController();
+  final luxuryBudgetController = TextEditingController();
 
   final box = Hive.box('Budget');
   double recBudgetToday =
@@ -84,46 +85,238 @@ class _RemBudget extends State<RemBudget> {
     return box.get("RecBudgetToday", defaultValue: 0.0);
   }
 
+  double getMonthBudget() {
+    return box.get("MonthBudget", defaultValue: 0.0);
+  }
+
+  double getLuxuryBudget() {
+    return box.get("LuxuryBudget", defaultValue: 0.0);
+  }
+
+  void saveMonthBudget(double value) {
+    box.put("MonthBudget", value);
+  }
+
+  void saveLuxuryBudget(double value) {
+    box.put("LuxuryBudget", value);
+  }
+
+  int getRemainingDaysInMonth() {
+    final now = DateTime.now();
+    final lastDay = DateTime(now.year, now.month + 1, 0);
+    return lastDay.day - now.day + 1;
+  }
+
+  double calculateWeekBudget() {
+    double monthBudget = getMonthBudget();
+    int remainingDays = getRemainingDaysInMonth();
+    // Calculate daily budget and multiply by 7 for week
+    double dailyBudget = monthBudget / remainingDays;
+    return dailyBudget * 7;
+  }
+
   void calculateRecommended() {
-    double temp = getTotalBudget();
-    if (temp != 0) {
-      recBudgetToday = getTotalBudget() / getDayToday();
+    double weekBudget = calculateWeekBudget();
+    if (weekBudget > 0) {
+      recBudgetToday = weekBudget;
       saveRecBudget(recBudgetToday);
     }
   }
 
-  void addBudgetHandler(TextEditingController controller) {
-    saveTotalBudget(getTotalBudget() + double.parse(controller.text));
-    saveTotalBudgetAdded(getTotalBudgetAdded() + double.parse(controller.text));
+  void saveBudgetHandler() {
+    double monthBudget = double.tryParse(monthBudgetController.text) ?? 0;
+    double luxuryBudget = double.tryParse(luxuryBudgetController.text) ?? 0;
+
+    saveMonthBudget(monthBudget);
+    saveLuxuryBudget(luxuryBudget);
+    saveTotalBudget(monthBudget);
     calculateRecommended();
-    saveRecBudget(recBudgetToday);
   }
 
-  void addBudget(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: const Text("Add Budget"),
-              content: TextField(
-                controller: addBudgetController,
-                autofocus: true,
-                decoration: const InputDecoration(hintText: 'Amount'),
+  void showEditBudgetModal(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    // Pre-fill with current values
+    monthBudgetController.text = getMonthBudget() > 0 ? getMonthBudget().round().toString() : '';
+    luxuryBudgetController.text = getLuxuryBudget() > 0 ? getLuxuryBudget().round().toString() : '';
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: screenWidth * 0.03),
+              Container(
+                width: screenWidth * 0.1,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel')),
-                TextButton(
-                    onPressed: () {
-                      setState(() {
-                        addBudgetHandler(addBudgetController);
-                        recBudgetToday = getRecBudgetToday();
-                      });
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Add'))
-              ],
-            ));
+              SizedBox(height: screenWidth * 0.04),
+              Text(
+                'Edit Budget',
+                style: GoogleFonts.poppins(
+                  fontSize: screenWidth * 0.045,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: screenWidth * 0.04),
+
+              // Month Budget Input
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Month Budget',
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.035,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    TextField(
+                      controller: monthBudgetController,
+                      keyboardType: TextInputType.number,
+                      style: GoogleFonts.poppins(fontSize: screenWidth * 0.04),
+                      decoration: InputDecoration(
+                        hintText: 'Enter amount',
+                        hintStyle: GoogleFonts.poppins(
+                          color: Colors.grey[400],
+                          fontSize: screenWidth * 0.04,
+                        ),
+                        prefixText: 'P ',
+                        prefixStyle: GoogleFonts.poppins(
+                          color: Colors.black87,
+                          fontSize: screenWidth * 0.04,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.04,
+                          vertical: screenWidth * 0.035,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: screenWidth * 0.04),
+
+              // Luxury Budget Input
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Luxury Budget',
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.035,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    TextField(
+                      controller: luxuryBudgetController,
+                      keyboardType: TextInputType.number,
+                      style: GoogleFonts.poppins(fontSize: screenWidth * 0.04),
+                      decoration: InputDecoration(
+                        hintText: 'Enter amount',
+                        hintStyle: GoogleFonts.poppins(
+                          color: Colors.grey[400],
+                          fontSize: screenWidth * 0.04,
+                        ),
+                        prefixText: 'P ',
+                        prefixStyle: GoogleFonts.poppins(
+                          color: Colors.black87,
+                          fontSize: screenWidth * 0.04,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.04,
+                          vertical: screenWidth * 0.035,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: screenWidth * 0.06),
+
+              // Save Button
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      saveBudgetHandler();
+                      recBudgetToday = getRecBudgetToday();
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: screenWidth * 0.04),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color.fromRGBO(52, 119, 216, 1),
+                          Color.fromRGBO(81, 218, 96, 1),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Save',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: screenWidth * 0.06),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void loadData() {
@@ -144,7 +337,8 @@ class _RemBudget extends State<RemBudget> {
 
   @override
   void dispose() {
-    addBudgetController.dispose();
+    monthBudgetController.dispose();
+    luxuryBudgetController.dispose();
     super.dispose();
   }
 

@@ -187,43 +187,27 @@ class _ExpenseContainer extends State<ExpenseContainer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: screenWidth * 0.05),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Cashflow",
-                  style: GoogleFonts.poppins(
-                      color: Colors.grey[850],
-                      fontSize: screenWidth * 0.045,
-                      fontWeight: FontWeight.w600),
-                ),
-                ValueListenableBuilder<Box>(
-                    valueListenable: Hive.box('Budget').listenable(),
-                    builder: (context, box, widget) {
-                      return Text(
-                        "P ${sum.round().toString()}",
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.poppins(
-                            color: Colors.grey[600],
-                            fontSize: screenWidth * 0.035),
-                      );
-                    })
-              ],
+            Text(
+              "Today's Cashflow",
+              style: GoogleFonts.poppins(
+                  color: Colors.grey[850],
+                  fontSize: screenWidth * 0.045,
+                  fontWeight: FontWeight.w600),
             ),
-            IconButton(
-                icon: Icon(
-                  Icons.add_circle_rounded,
-                  size: screenWidth * 0.07,
-                  color: Color.fromRGBO(52, 119, 216, 1),
-                ),
-                onPressed: () {
-                  showDialogExpense(
-                      context, addTypeController, addPriceController);
-                }),
+            ValueListenableBuilder<Box>(
+                valueListenable: Hive.box('Budget').listenable(),
+                builder: (context, box, widget) {
+                  return Text(
+                    "P ${sum.round().toString()}",
+                    textAlign: TextAlign.left,
+                    style: GoogleFonts.poppins(
+                        color: Colors.grey[600],
+                        fontSize: screenWidth * 0.035),
+                  );
+                })
           ],
         ),
         SizedBox(height: screenWidth * 0.03),

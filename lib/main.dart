@@ -4,6 +4,7 @@ import 'package:badyet/ExpenseTodayHistoryBox.dart';
 import 'package:badyet/screens/History.dart';
 import 'package:badyet/screens/HistoryScaf.dart';
 import 'package:badyet/screens/home.dart';
+import 'package:badyet/screens/CalculatorExpense.dart';
 import 'package:flutter/material.dart';
 import 'package:badyet/screens/Settings.dart';
 import 'package:badyet/screens/About.dart';
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/about': (BuildContext ctx) => AboutPage(),
         '/history': (BuildContext ctx) => HistoryPage(),
         '/historytemp': (BuildContext ctx) => LatestHistory(),
+        '/calculator': (BuildContext ctx) => CalculatorExpensePage(),
       },
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(
