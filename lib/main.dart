@@ -1,7 +1,6 @@
 import 'package:badyet/DatesBox.dart';
 import 'package:badyet/ExpenseItemClass.dart';
 import 'package:badyet/ExpenseTodayHistoryBox.dart';
-import 'package:badyet/screens/Help.dart';
 import 'package:badyet/screens/History.dart';
 import 'package:badyet/screens/HistoryScaf.dart';
 import 'package:badyet/screens/home.dart';
@@ -38,7 +37,6 @@ class MyApp extends StatelessWidget {
         '/about': (BuildContext ctx) => AboutPage(),
         '/history': (BuildContext ctx) => HistoryPage(),
         '/historytemp': (BuildContext ctx) => LatestHistory(),
-        '/help': (BuildContext ctx) => Help(),
       },
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(

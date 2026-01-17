@@ -3,8 +3,8 @@ import 'package:badyet/widgets/HomeExpenseView.dart';
 import 'package:badyet/widgets/RemBudget.dart';
 import 'package:badyet/widgets/AddButton.dart';
 import 'package:badyet/widgets/BottomNavbar.dart';
-import 'package:badyet/widgets/budgetbar.dart';
 import 'package:badyet/widgets/noExpense.dart';
+import 'package:badyet/widgets/Accounts.dart';
 
 import 'package:flutter/material.dart';
 
@@ -43,7 +43,10 @@ class _badyetHome extends State<badyetHome> {
                         SizedBox(
                           height: 20,
                         ),
-                        budgetBar(),
+                        Accounts(),
+                        SizedBox(
+                          height: 20,
+                        ),
                         decider == 1 ? noExpense() : ExpenseContainer(),
                       ],
                     ),

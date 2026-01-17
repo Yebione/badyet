@@ -52,12 +52,12 @@ class _budgetBar extends State<budgetBar> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "PHP: ${getExpensesWeek().round().toString()}",
+                    "P ${getExpensesWeek().round().toString()}",
                     style: GoogleFonts.poppins(
                         fontSize: 12, fontStyle: FontStyle.italic),
                   ),
                   Text(
-                    "PHP: ${getTotalAddedBudget().round().toString()}",
+                    "P ${getTotalAddedBudget().round().toString()}",
                     style: GoogleFonts.poppins(
                         fontSize: 12, fontStyle: FontStyle.italic),
                   )

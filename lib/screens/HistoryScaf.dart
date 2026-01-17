@@ -337,7 +337,7 @@ class _LatestHistory extends State<LatestHistory> {
                                               Expanded(
                                                 // Use Expanded to take up the remaining space
                                                 child: Text(
-                                                  "- PHP ${item.price}",
+                                                  "- P ${item.price}",
                                                   textAlign: TextAlign.right,
                                                   style: GoogleFonts.poppins(
                                                       fontSize:

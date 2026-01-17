@@ -159,6 +159,14 @@ class _ExpenseContainer extends State<ExpenseContainer> {
   final TextEditingController addTypeController = TextEditingController();
   final TextEditingController addPriceController = TextEditingController();
 
+  // Mock data for display
+  final List<Map<String, dynamic>> mockCashflow = [
+    {'category': 'Food & Drinks', 'type': 'Lunch at Jollibee', 'price': '150.00', 'isIncome': false},
+    {'category': 'Income', 'type': 'Salary', 'price': '15,000.00', 'isIncome': true},
+    {'category': 'Transportation', 'type': 'Grab to work', 'price': '85.00', 'isIncome': false},
+    {'category': 'Shopping', 'type': 'Groceries', 'price': '520.00', 'isIncome': false},
+  ];
+
   @override
   dispose() {
     addTypeController.dispose();
@@ -175,115 +183,149 @@ class _ExpenseContainer extends State<ExpenseContainer> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-      margin: const EdgeInsets.only(top: 35),
-      padding: const EdgeInsets.only(top: 30, left: 30, right: 35),
-      width: screenWidth,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: const Color.fromARGB(71, 192, 192, 192),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Expenses Today",
-                    style: GoogleFonts.poppins(
-                        color: Colors.grey[850],
-                        fontSize: screenWidth / 22,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  ValueListenableBuilder<Box>(
-                      valueListenable: Hive.box('Budget').listenable(),
-                      builder: (context, box, widget) {
-                        return Text(
-                          "PHP ${sum.round().toString()}",
-                          textAlign: TextAlign.left,
-                          style: GoogleFonts.poppins(
-                              color: Colors.grey[850],
-                              fontSize: screenWidth / 24),
-                        );
-                      })
-                ],
-              ),
-              IconButton(
-                  icon: Icon(
-                    Icons.add_circle_rounded,
-                    size: screenWidth * 0.07,
-                  ),
-                  onPressed: () {
-                    showDialogExpense(
-                        context, addTypeController, addPriceController);
-                  }),
-            ],
-          ),
-          const SizedBox(height: 16), // Adjust the height as needed
-          const Divider(
-            height: 2, // You can adjust the height of the divider
-            color: Color.fromARGB(201, 48, 48, 48),
-          ),
-          ValueListenableBuilder<Box>(
-            valueListenable: expenseTodayBox.listenable(),
-            builder: (context, box, _) {
-              return ListView.builder(
-                key: UniqueKey(),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: expenseTodayBox.length,
-                itemBuilder: (context, index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: screenWidth * 0.05),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Cashflow",
+                  style: GoogleFonts.poppins(
+                      color: Colors.grey[850],
+                      fontSize: screenWidth * 0.045,
+                      fontWeight: FontWeight.w600),
+                ),
+                ValueListenableBuilder<Box>(
+                    valueListenable: Hive.box('Budget').listenable(),
+                    builder: (context, box, widget) {
+                      return Text(
+                        "P ${sum.round().toString()}",
+                        textAlign: TextAlign.left,
+                        style: GoogleFonts.poppins(
+                            color: Colors.grey[600],
+                            fontSize: screenWidth * 0.035),
+                      );
+                    })
+              ],
+            ),
+            IconButton(
+                icon: Icon(
+                  Icons.add_circle_rounded,
+                  size: screenWidth * 0.07,
+                  color: Color.fromRGBO(52, 119, 216, 1),
+                ),
+                onPressed: () {
+                  showDialogExpense(
+                      context, addTypeController, addPriceController);
+                }),
+          ],
+        ),
+        SizedBox(height: screenWidth * 0.03),
+        Divider(
+          height: 1,
+          color: Colors.grey[300],
+        ),
+        ValueListenableBuilder<Box>(
+          valueListenable: expenseTodayBox.listenable(),
+          builder: (context, box, _) {
+            // Use mock data if no real data exists
+            final bool useMock = expenseTodayBox.isEmpty;
+            final int itemCount = useMock ? mockCashflow.length : expenseTodayBox.length;
+
+            return ListView.builder(
+              key: UniqueKey(),
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: itemCount,
+              itemBuilder: (context, index) {
+                String category;
+                String type;
+                String price;
+                bool isIncome;
+
+                if (useMock) {
+                  category = mockCashflow[index]['category']!;
+                  type = mockCashflow[index]['type']!;
+                  price = mockCashflow[index]['price']!;
+                  isIncome = mockCashflow[index]['isIncome'] ?? false;
+                } else {
                   ExpenseItemClass? item = expenseTodayBox.getAt(index);
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  category = item!.category;
+                  type = item.type;
+                  price = item.price;
+                  isIncome = false; // Real data defaults to expense
+                }
+
+                return Padding(
+                  padding: EdgeInsets.only(
+                    top: index == 0 ? 0 : screenWidth * 0.035,
+                    bottom: screenWidth * 0.035,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(Icons.monetization_on_rounded,
-                          size: screenWidth / 12),
-                      SizedBox(width: screenWidth / 22),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item!.category,
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.042,
-                              fontWeight: FontWeight.w900,
-                            ),
-                            textAlign: TextAlign.left,
-                          ),
-                          Text(
-                            item.type,
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.03,
-                            ),
-                          ),
-                        ],
+                      Container(
+                        padding: EdgeInsets.all(screenWidth * 0.025),
+                        decoration: BoxDecoration(
+                          color: isIncome
+                              ? Color.fromRGBO(34, 139, 34, 0.1)
+                              : Colors.red.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Icon(
+                          isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                          size: screenWidth * 0.06,
+                          color: isIncome
+                              ? Color.fromRGBO(34, 139, 34, 1)
+                              : Colors.red[400],
+                        ),
                       ),
+                      SizedBox(width: screenWidth * 0.04),
                       Expanded(
-                        child: Text(
-                          "- PHP ${item.price}",
-                          textAlign: TextAlign.right,
-                          style: GoogleFonts.poppins(
-                            fontSize: screenWidth * 0.037,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              category,
+                              style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.038,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              type,
+                              style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.03,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        isIncome ? "+ P $price" : "- P $price",
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.038,
+                          fontWeight: FontWeight.w500,
+                          color: isIncome ? Color.fromRGBO(34, 139, 34, 1) : Colors.red[400],
                         ),
                       ),
                     ],
-                  );
-                },
-              );
-            },
-          ),
-          const SizedBox(
-            height: 25,
-          )
-        ],
-      ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+        SizedBox(height: screenWidth * 0.05),
+      ],
     );
   }
 }

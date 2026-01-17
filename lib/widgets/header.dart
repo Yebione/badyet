@@ -66,7 +66,7 @@ class _header extends State<header> {
                   Text(
                     'Today is $dayToday',
                     style: GoogleFonts.poppins(
-                      color: Colors.green[400],
+                      color: Color.fromRGBO(34, 139, 34, 1),
                       fontSize: screenWidth * 0.045,
                       fontWeight: FontWeight.w700,
                     ),
@@ -85,34 +85,6 @@ class _header extends State<header> {
                 ],
               ),
             ],
-          ),
-          Container(
-            padding: EdgeInsets.all(screenWidth * 0.001),
-            child: Container(
-              // Adjust the maximum width as needed
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/help',
-                  );
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.grey.shade300,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  textStyle: GoogleFonts.poppins(
-                    fontSize: screenWidth * 0.029,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  backgroundColor: Colors.grey.shade700,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text("HELP"),
-              ),
-            ),
           ),
         ],
       ),

@@ -79,7 +79,7 @@ class HistoryPage extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'PHP 9999.99',
+                          'P 9999.99',
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: Color.fromARGB(255, 255, 255, 255),
