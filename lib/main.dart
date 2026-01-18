@@ -25,10 +25,34 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isDarkMode = Hive.box('Budget').get('isDarkMode', defaultValue: false);
+  }
+
+  bool get isDarkMode => _isDarkMode;
+
+  void toggleDarkMode(bool value) {
+    setState(() {
+      _isDarkMode = value;
+      Hive.box('Budget').put('isDarkMode', value);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -38,13 +62,24 @@ class MyApp extends StatelessWidget {
         '/about': (BuildContext ctx) => AboutPage(),
         '/history': (BuildContext ctx) => HistoryPage(),
         '/historytemp': (BuildContext ctx) => LatestHistory(),
+        '/analytics': (BuildContext ctx) => LatestHistory(),
         '/calculator': (BuildContext ctx) => CalculatorExpensePage(),
       },
       theme: ThemeData(
+        brightness: Brightness.light,
+        scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.poppinsTextTheme(
           Theme.of(context).textTheme,
         ),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Color(0xFF121212),
+        textTheme: GoogleFonts.poppinsTextTheme(
+          ThemeData.dark().textTheme,
+        ),
+      ),
+      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       home: const badyetHome(),
     );
