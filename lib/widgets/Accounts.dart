@@ -1,22 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Accounts extends StatefulWidget {
-  const Accounts({super.key});
+  final Function(Set<int> selectedIndices, List<Map<String, dynamic>> accounts)? onSelectionChanged;
+
+  const Accounts({super.key, this.onSelectionChanged});
 
   @override
   State<Accounts> createState() => _AccountsState();
 }
 
 class _AccountsState extends State<Accounts> {
-  List<Map<String, dynamic>> accounts = [
-    {'name': 'Cash', 'accNo': '', 'balance': 5000.0},
-    {'name': 'GCash', 'accNo': '0917-XXX-XXXX', 'balance': 2500.0},
-  ];
+  Set<int> selectedAccounts = {};
 
   final nameController = TextEditingController();
   final accNoController = TextEditingController();
   final balanceController = TextEditingController();
+
+  final box = Hive.box('Budget');
+
+  List<Map<String, dynamic>> get accounts {
+    List<dynamic> stored = box.get('accounts', defaultValue: [
+      {'name': 'Cash', 'accNo': '', 'balance': 0.0}
+    ]);
+    return stored.map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+
+  void saveAccounts(List<Map<String, dynamic>> newAccounts) {
+    box.put('accounts', newAccounts);
+  }
+
+  void toggleAccountSelection(int index) {
+    setState(() {
+      if (selectedAccounts.contains(index)) {
+        // Deselect if already selected
+        selectedAccounts.clear();
+      } else {
+        // Select only this one
+        selectedAccounts.clear();
+        selectedAccounts.add(index);
+      }
+    });
+    widget.onSelectionChanged?.call(selectedAccounts, accounts);
+  }
+
+  void selectAllAccounts() {
+    setState(() {
+      if (selectedAccounts.length == accounts.length) {
+        // If all selected, deselect all
+        selectedAccounts.clear();
+      } else {
+        // Select all
+        selectedAccounts = Set.from(List.generate(accounts.length, (i) => i));
+      }
+    });
+    widget.onSelectionChanged?.call(selectedAccounts, accounts);
+  }
+
+  String? getSelectedAccountName() {
+    if (selectedAccounts.length == 1) {
+      return accounts[selectedAccounts.first]['name'];
+    }
+    return null;
+  }
 
   void addAccount(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -159,13 +206,16 @@ class _AccountsState extends State<Accounts> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          setState(() {
-                            accounts.add({
+                          if (nameController.text.isNotEmpty) {
+                            List<Map<String, dynamic>> currentAccounts = accounts;
+                            currentAccounts.add({
                               'name': nameController.text,
                               'accNo': accNoController.text,
                               'balance': double.tryParse(balanceController.text) ?? 0.0,
                             });
-                          });
+                            saveAccounts(currentAccounts);
+                            setState(() {});
+                          }
                           nameController.clear();
                           accNoController.clear();
                           balanceController.clear();
@@ -272,7 +322,7 @@ class _AccountsState extends State<Accounts> {
               ),
               SizedBox(height: screenWidth * 0.01),
               Text(
-                'P ${account['balance'].toStringAsFixed(2)}',
+                'P ${(account['balance'] as num).toStringAsFixed(2)}',
                 style: GoogleFonts.poppins(
                   fontSize: screenWidth * 0.06,
                   fontWeight: FontWeight.w600,
@@ -313,7 +363,7 @@ class _AccountsState extends State<Accounts> {
     final editNameController = TextEditingController(text: accounts[index]['name']);
     final editAccNoController = TextEditingController(text: accounts[index]['accNo'] ?? '');
     final editBalanceController = TextEditingController(
-      text: accounts[index]['balance'].toStringAsFixed(0),
+      text: (accounts[index]['balance'] as num).toStringAsFixed(0),
     );
 
     showDialog(
@@ -475,9 +525,10 @@ class _AccountsState extends State<Accounts> {
                                       Expanded(
                                         child: TextButton(
                                           onPressed: () {
-                                            setState(() {
-                                              accounts.removeAt(index);
-                                            });
+                                            List<Map<String, dynamic>> currentAccounts = accounts;
+                                            currentAccounts.removeAt(index);
+                                            saveAccounts(currentAccounts);
+                                            setState(() {});
                                             Navigator.of(ctx).pop();
                                             Navigator.of(context).pop();
                                           },
@@ -539,13 +590,14 @@ class _AccountsState extends State<Accounts> {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          setState(() {
-                            accounts[index] = {
-                              'name': editNameController.text,
-                              'accNo': editAccNoController.text,
-                              'balance': double.tryParse(editBalanceController.text) ?? 0.0,
-                            };
-                          });
+                          List<Map<String, dynamic>> currentAccounts = accounts;
+                          currentAccounts[index] = {
+                            'name': editNameController.text,
+                            'accNo': editAccNoController.text,
+                            'balance': double.tryParse(editBalanceController.text) ?? 0.0,
+                          };
+                          saveAccounts(currentAccounts);
+                          setState(() {});
                           Navigator.of(context).pop();
                         },
                         style: TextButton.styleFrom(
@@ -575,23 +627,28 @@ class _AccountsState extends State<Accounts> {
   }
 
   Widget _buildAccountCard(Map<String, dynamic> account, int index, double screenWidth) {
+    bool isSelected = selectedAccounts.isEmpty || selectedAccounts.contains(index);
+
     return GestureDetector(
-      onTap: () => viewAccount(context, index),
+      onTap: () => toggleAccountSelection(index),
+      onLongPress: () => viewAccount(context, index),
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: screenWidth * 0.03,
           vertical: screenWidth * 0.035,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isSelected ? Colors.white : Colors.grey[200],
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : [],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -601,15 +658,16 @@ class _AccountsState extends State<Accounts> {
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 fontSize: screenWidth * 0.03,
-                color: Colors.grey[600],
+                color: isSelected ? Colors.grey[600] : Colors.grey[400],
               ),
             ),
             SizedBox(height: screenWidth * 0.01),
             Text(
-              'P ${account['balance'].toStringAsFixed(0)}',
+              'P ${(account['balance'] as num).toStringAsFixed(0)}',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: screenWidth * 0.035,
+                color: isSelected ? Colors.black : Colors.grey[400],
               ),
             ),
           ],
@@ -694,22 +752,41 @@ class _AccountsState extends State<Accounts> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: screenWidth * 0.02),
-          child: Text(
-            'Accounts',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: screenWidth * 0.045,
+    return ValueListenableBuilder(
+      valueListenable: box.listenable(keys: ['accounts']),
+      builder: (context, Box box, _) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: screenWidth * 0.02),
+              child: Text(
+                'Accounts',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: screenWidth * 0.045,
+                ),
+              ),
             ),
-          ),
-        ),
-        SizedBox(height: screenWidth * 0.03),
-        ..._buildRows(screenWidth),
-      ],
+            SizedBox(height: screenWidth * 0.03),
+            ..._buildRows(screenWidth),
+            SizedBox(height: screenWidth * 0.06),
+            Center(
+              child: GestureDetector(
+                onTap: selectAllAccounts,
+                child: Text(
+                  selectedAccounts.length == accounts.length ? 'Deselect All' : 'Select All',
+                  style: GoogleFonts.poppins(
+                    fontSize: screenWidth * 0.035,
+                    fontWeight: FontWeight.w500,
+                    color: Color.fromRGBO(52, 119, 216, 1),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

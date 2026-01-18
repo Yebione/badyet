@@ -93,6 +93,10 @@ class _RemBudget extends State<RemBudget> {
     return box.get("LuxuryBudget", defaultValue: 0.0);
   }
 
+  double getTotalExpenses() {
+    return box.get("TotalExpensesWeek", defaultValue: 0.0);
+  }
+
   void saveMonthBudget(double value) {
     box.put("MonthBudget", value);
   }
@@ -140,48 +144,33 @@ class _RemBudget extends State<RemBudget> {
     monthBudgetController.text = getMonthBudget() > 0 ? getMonthBudget().round().toString() : '';
     luxuryBudgetController.text = getLuxuryBudget() > 0 ? getLuxuryBudget().round().toString() : '';
 
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            ),
+            borderRadius: BorderRadius.circular(24),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: screenWidth * 0.03),
-              Container(
-                width: screenWidth * 0.1,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
+          child: Padding(
+            padding: EdgeInsets.all(screenWidth * 0.06),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Edit Budget',
+                  style: GoogleFonts.poppins(
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              SizedBox(height: screenWidth * 0.04),
-              Text(
-                'Edit Budget',
-                style: GoogleFonts.poppins(
-                  fontSize: screenWidth * 0.045,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(height: screenWidth * 0.04),
+                SizedBox(height: screenWidth * 0.05),
 
-              // Month Budget Input
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
-                child: Column(
+                // Month Budget Input
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -203,11 +192,17 @@ class _RemBudget extends State<RemBudget> {
                           color: Colors.grey[400],
                           fontSize: screenWidth * 0.04,
                         ),
-                        prefixText: 'P ',
-                        prefixStyle: GoogleFonts.poppins(
-                          color: Colors.black87,
-                          fontSize: screenWidth * 0.04,
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(left: screenWidth * 0.04, right: screenWidth * 0.01),
+                          child: Text(
+                            'P',
+                            style: GoogleFonts.poppins(
+                              color: Colors.black87,
+                              fontSize: screenWidth * 0.04,
+                            ),
+                          ),
                         ),
+                        prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
                         filled: true,
                         fillColor: Colors.grey[100],
                         border: OutlineInputBorder(
@@ -222,14 +217,11 @@ class _RemBudget extends State<RemBudget> {
                     ),
                   ],
                 ),
-              ),
 
-              SizedBox(height: screenWidth * 0.04),
+                SizedBox(height: screenWidth * 0.04),
 
-              // Luxury Budget Input
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
-                child: Column(
+                // Luxury Budget Input
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -251,11 +243,17 @@ class _RemBudget extends State<RemBudget> {
                           color: Colors.grey[400],
                           fontSize: screenWidth * 0.04,
                         ),
-                        prefixText: 'P ',
-                        prefixStyle: GoogleFonts.poppins(
-                          color: Colors.black87,
-                          fontSize: screenWidth * 0.04,
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(left: screenWidth * 0.04, right: screenWidth * 0.01),
+                          child: Text(
+                            'P',
+                            style: GoogleFonts.poppins(
+                              color: Colors.black87,
+                              fontSize: screenWidth * 0.04,
+                            ),
+                          ),
                         ),
+                        prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
                         filled: true,
                         fillColor: Colors.grey[100],
                         border: OutlineInputBorder(
@@ -270,14 +268,11 @@ class _RemBudget extends State<RemBudget> {
                     ),
                   ],
                 ),
-              ),
 
-              SizedBox(height: screenWidth * 0.06),
+                SizedBox(height: screenWidth * 0.06),
 
-              // Save Button
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
-                child: GestureDetector(
+                // Save Button
+                GestureDetector(
                   onTap: () {
                     setState(() {
                       saveBudgetHandler();
@@ -309,10 +304,8 @@ class _RemBudget extends State<RemBudget> {
                     ),
                   ),
                 ),
-              ),
-
-              SizedBox(height: screenWidth * 0.06),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -385,18 +378,18 @@ class _RemBudget extends State<RemBudget> {
                             ),
                           ),
                           Text(
-                            'P ${getRecBudgetToday().round().toString()}',
+                            'P ${(((getMonthBudget() - getLuxuryBudget()) / 4) - getTotalExpenses()).round().toString()}',
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                               fontSize: screenWidth * 0.11,
                             ),
                           ),
-                          SizedBox(height: screenWidth * 0.02),
+                          SizedBox(height: screenWidth * 0.005),
                           Row(
                             children: [
                               Text(
-                                'Recommended: ',
+                                'Weekly Budget: ',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   color: Colors.white.withOpacity(0.8),
@@ -404,7 +397,7 @@ class _RemBudget extends State<RemBudget> {
                                 ),
                               ),
                               Text(
-                                'P 2,500',
+                                'P ${((getMonthBudget() - getLuxuryBudget()) / 4).round().toString()}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   color: Colors.white,
@@ -424,7 +417,7 @@ class _RemBudget extends State<RemBudget> {
                       icon: Icon(Icons.edit_rounded,
                           color: Colors.white, size: screenWidth * 0.06),
                       onPressed: () {
-                        addBudget(context);
+                        showEditBudgetModal(context);
                       },
                     ),
                   ),
@@ -462,15 +455,15 @@ class _RemBudget extends State<RemBudget> {
                       Row(
                         children: [
                           Text(
-                            'P 15,000',
+                            'P ${(getMonthBudget() - getTotalExpenses()).round().toString()}',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: Colors.black87,
+                              color: (getMonthBudget() - getTotalExpenses()) < 0 ? Colors.red[400] : Colors.black87,
                               fontSize: screenWidth * 0.035,
                             ),
                           ),
                           Text(
-                            ' / 20,000',
+                            ' / ${getMonthBudget().round().toString()}',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.grey[500],
@@ -496,7 +489,7 @@ class _RemBudget extends State<RemBudget> {
                       Row(
                         children: [
                           Text(
-                            'P 5,000',
+                            'P ${getLuxuryBudget().round().toString()}',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.black87,
@@ -504,7 +497,7 @@ class _RemBudget extends State<RemBudget> {
                             ),
                           ),
                           Text(
-                            ' / 10,000',
+                            ' / ${getLuxuryBudget().round().toString()}',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.grey[500],
@@ -525,7 +518,7 @@ class _RemBudget extends State<RemBudget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Total Month Spend:',
+                        'Total Expenses:',
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           color: Colors.grey[600],
@@ -533,7 +526,7 @@ class _RemBudget extends State<RemBudget> {
                         ),
                       ),
                       Text(
-                        'P 8,350',
+                        'P ${getTotalExpenses().round().toString()}',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,

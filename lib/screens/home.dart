@@ -16,9 +16,28 @@ class badyetHome extends StatefulWidget {
 }
 
 class _badyetHome extends State<badyetHome> {
+  Set<int> selectedAccountIndices = {};
+  List<Map<String, dynamic>> accountsList = [];
+
+  void onAccountSelectionChanged(Set<int> selectedIndices, List<Map<String, dynamic>> accounts) {
+    setState(() {
+      selectedAccountIndices = selectedIndices;
+      accountsList = accounts;
+    });
+  }
+
+  List<String> getSelectedAccountNames() {
+    if (selectedAccountIndices.isEmpty) return [];
+    return selectedAccountIndices
+        .where((i) => i < accountsList.length)
+        .map((i) => accountsList[i]['name'] as String)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
         child: Center(
           child: Builder(
@@ -43,11 +62,11 @@ class _badyetHome extends State<badyetHome> {
                         SizedBox(
                           height: 20,
                         ),
-                        Accounts(),
+                        Accounts(onSelectionChanged: onAccountSelectionChanged),
                         SizedBox(
                           height: 20,
                         ),
-                        decider == 1 ? noExpense() : ExpenseContainer(),
+                        decider == 1 ? noExpense() : ExpenseContainer(selectedAccountNames: getSelectedAccountNames()),
                       ],
                     ),
                   ),
@@ -58,7 +77,11 @@ class _badyetHome extends State<badyetHome> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: AddExpenseButton(),
+      floatingActionButton: AddExpenseButton(
+        selectedAccount: selectedAccountIndices.length == 1 && accountsList.isNotEmpty
+            ? accountsList[selectedAccountIndices.first]['name']
+            : null,
+      ),
       bottomNavigationBar: BottomNavbar(),
     );
   }

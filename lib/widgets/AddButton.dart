@@ -1,13 +1,21 @@
+import 'package:badyet/screens/CalculatorExpense.dart';
 import 'package:flutter/material.dart';
 
 class AddExpenseButton extends StatelessWidget {
-  const AddExpenseButton({super.key});
+  final String? selectedAccount;
+
+  const AddExpenseButton({super.key, this.selectedAccount});
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/calculator');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CalculatorExpensePage(initialAccount: selectedAccount),
+          ),
+        );
       },
       backgroundColor: Colors.transparent,
       shape: const CircleBorder(eccentricity: 0.0),

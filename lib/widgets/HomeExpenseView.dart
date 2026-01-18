@@ -4,180 +4,82 @@ import 'package:badyet/ExpensesTodayBox.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'dart:math';
 
 class ExpenseContainer extends StatefulWidget {
-  const ExpenseContainer({super.key});
+  final List<String> selectedAccountNames;
+
+  const ExpenseContainer({super.key, this.selectedAccountNames = const []});
 
   @override
   State<ExpenseContainer> createState() => _ExpenseContainer();
 }
 
-DateTime today = DateTime.now();
-String dateStr = "${today.month}-${today.day}-${today.year}";
-String selectedCategory = 'Food & Drinks';
-List<String> categories = [
-  'Food & Drinks',
-  'Shopping',
-  'Housing',
-  'Transportation',
-  'Vehicle',
-  'Life & Entertainment',
-  'Communication, PC',
-  'Financial Expenses',
-  'Investments',
-  'Others'
-];
-void toast(BuildContext context, String text) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    content: Text(text),
-  ));
-}
-
-final box = Hive.box('Budget');
-double recBudgetToday =
-    Hive.box('Budget').get("RecBudgetToday", defaultValue: 0.0);
-double totalBudget = Hive.box('Budget').get("TotalBudget", defaultValue: 0.0);
-double totalExpensesWeek =
-    Hive.box('Budget').get("TotalExpensesWeek", defaultValue: 0.0);
-double sumExpensesToday =
-    Hive.box('Budget').get("SumExpensesToday", defaultValue: 0.0);
-double sum = 0.0;
-void saveTotalBudget(double value) {
-  box.put("TotalBudget", value);
-}
-
-void saveRecBudget(double value) {
-  box.put("RecBudgetToday", value);
-}
-
-void saveTotalExpensesWeek(double value) {
-  box.put("TotalExpensesWeek", value);
-}
-
-void getSumExpensesToday() {
-  sum = 0.0;
-  for (var object in expenseTodayBox.values) {
-    sum += double.parse(object.price);
-  }
-}
-
-double getRecBudgetToday() {
-  return box.get("RecBudgetToday", defaultValue: 0.0);
-}
-
-double getTotalBudget() {
-  return box.get("TotalBudget");
-}
-
-double getTotalExpensesWeek() {
-  return box.get("TotalExpensesWeek", defaultValue: 0.0);
-}
-
-String generateKey(int len) {
-  var r = Random();
-  const chars =
-      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  return List.generate(len, (index) => chars[r.nextInt(chars.length)]).join();
-}
-
-void showDialogExpense(BuildContext context, TextEditingController type,
-    TextEditingController amount) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text("Add Expense"),
-            content: Column(
-              children: [
-                const Text('Please Select a Category:'),
-                DropdownButton<String>(
-                  value: selectedCategory,
-                  items: categories.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCategory = newValue!;
-                    });
-                  },
-                ),
-                TextField(
-                  controller: type,
-                  autofocus: true,
-                  decoration: const InputDecoration(hintText: 'Type'),
-                ),
-                TextField(
-                  controller: amount,
-                  autofocus: true,
-                  decoration: const InputDecoration(hintText: 'Amount'),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancel')),
-              TextButton(
-                  onPressed: () {
-                    setState(() {
-                      expenseTodayBox.put(
-                          "key_${generateKey(15)}",
-                          ExpenseItemClass(dateStr, selectedCategory, type.text,
-                              amount.text));
-                      expenseTodayHistoryBox.put(
-                          "key_${generateKey(15)}",
-                          ExpenseItemClass(dateStr, selectedCategory, type.text,
-                              amount.text));
-                      saveRecBudget(
-                          getRecBudgetToday() - double.parse(amount.text));
-                      saveTotalBudget(
-                          getTotalBudget() - double.parse(amount.text));
-                      saveTotalExpensesWeek(
-                          getTotalExpensesWeek() + double.parse(amount.text));
-                      getSumExpensesToday();
-                    });
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Add')),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
-
 class _ExpenseContainer extends State<ExpenseContainer> {
-  final TextEditingController addTypeController = TextEditingController();
-  final TextEditingController addPriceController = TextEditingController();
-
-  // Mock data for display
-  final List<Map<String, dynamic>> mockCashflow = [
-    {'category': 'Food & Drinks', 'type': 'Lunch at Jollibee', 'price': '150.00', 'isIncome': false},
-    {'category': 'Income', 'type': 'Salary', 'price': '15,000.00', 'isIncome': true},
-    {'category': 'Transportation', 'type': 'Grab to work', 'price': '85.00', 'isIncome': false},
-    {'category': 'Shopping', 'type': 'Groceries', 'price': '520.00', 'isIncome': false},
-  ];
-
-  @override
-  dispose() {
-    addTypeController.dispose();
-    addPriceController.dispose();
-    super.dispose();
+  double getCashflowToday() {
+    double total = 0.0;
+    for (var object in expenseTodayBox.values) {
+      double amount = double.tryParse(object.price) ?? 0.0;
+      if (object.category == 'Income') {
+        total += amount;
+      } else {
+        total -= amount;
+      }
+    }
+    return total;
   }
 
-  @override
-  void initState() {
-    getSumExpensesToday();
-    super.initState();
+  Color getCategoryColor(String category) {
+    switch (category) {
+      case 'Food & Drinks':
+        return Color(0xFFFF6B6B);
+      case 'Shopping':
+        return Color(0xFF4ECDC4);
+      case 'Transportation':
+        return Color(0xFFFFE66D);
+      case 'Housing':
+        return Color(0xFF95E1D3);
+      case 'Life & Entertainment':
+        return Color(0xFFDDA0DD);
+      case 'Communication, PC':
+        return Color(0xFF87CEEB);
+      case 'Financial Expenses':
+        return Color(0xFFFFB347);
+      case 'Vehicle':
+        return Color(0xFF98D8C8);
+      case 'Investments':
+        return Color(0xFF7B68EE);
+      case 'Income':
+        return Color(0xFF228B22);
+      default:
+        return Color(0xFFB0B0B0);
+    }
+  }
+
+  IconData getCategoryIcon(String category) {
+    switch (category) {
+      case 'Food & Drinks':
+        return Icons.restaurant_rounded;
+      case 'Shopping':
+        return Icons.shopping_bag_rounded;
+      case 'Transportation':
+        return Icons.directions_car_rounded;
+      case 'Housing':
+        return Icons.home_rounded;
+      case 'Life & Entertainment':
+        return Icons.movie_rounded;
+      case 'Communication, PC':
+        return Icons.phone_android_rounded;
+      case 'Financial Expenses':
+        return Icons.account_balance_rounded;
+      case 'Vehicle':
+        return Icons.local_gas_station_rounded;
+      case 'Investments':
+        return Icons.trending_up_rounded;
+      case 'Income':
+        return Icons.attach_money_rounded;
+      default:
+        return Icons.category_rounded;
+    }
   }
 
   @override
@@ -187,8 +89,8 @@ class _ExpenseContainer extends State<ExpenseContainer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: screenWidth * 0.05),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               "Today's Cashflow",
@@ -197,15 +99,17 @@ class _ExpenseContainer extends State<ExpenseContainer> {
                   fontSize: screenWidth * 0.045,
                   fontWeight: FontWeight.w600),
             ),
-            ValueListenableBuilder<Box>(
-                valueListenable: Hive.box('Budget').listenable(),
+            ValueListenableBuilder<Box<ExpenseItemClass>>(
+                valueListenable: expenseTodayBox.listenable(),
                 builder: (context, box, widget) {
+                  double total = getCashflowToday();
+                  bool isPositive = total >= 0;
                   return Text(
-                    "P ${sum.round().toString()}",
-                    textAlign: TextAlign.left,
+                    "${isPositive ? '+' : '-'} P ${total.abs().toStringAsFixed(0)}",
                     style: GoogleFonts.poppins(
-                        color: Colors.grey[600],
-                        fontSize: screenWidth * 0.035),
+                        color: isPositive ? Color.fromRGBO(34, 139, 34, 1) : Colors.red[400],
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.w600),
                   );
                 })
           ],
@@ -215,37 +119,48 @@ class _ExpenseContainer extends State<ExpenseContainer> {
           height: 1,
           color: Colors.grey[300],
         ),
-        ValueListenableBuilder<Box>(
+        ValueListenableBuilder<Box<ExpenseItemClass>>(
           valueListenable: expenseTodayBox.listenable(),
           builder: (context, box, _) {
-            // Use mock data if no real data exists
-            final bool useMock = expenseTodayBox.isEmpty;
-            final int itemCount = useMock ? mockCashflow.length : expenseTodayBox.length;
+            if (expenseTodayBox.isEmpty) {
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: screenWidth * 0.1),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.receipt_long_rounded,
+                        size: screenWidth * 0.15,
+                        color: Colors.grey[300],
+                      ),
+                      SizedBox(height: screenWidth * 0.03),
+                      Text(
+                        'No transactions today',
+                        style: GoogleFonts.poppins(
+                          color: Colors.grey[400],
+                          fontSize: screenWidth * 0.035,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
 
             return ListView.builder(
               key: UniqueKey(),
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: itemCount,
+              itemCount: expenseTodayBox.length,
               itemBuilder: (context, index) {
-                String category;
-                String type;
-                String price;
-                bool isIncome;
+                ExpenseItemClass? item = expenseTodayBox.getAt(expenseTodayBox.length - 1 - index);
+                if (item == null) return SizedBox();
 
-                if (useMock) {
-                  category = mockCashflow[index]['category']!;
-                  type = mockCashflow[index]['type']!;
-                  price = mockCashflow[index]['price']!;
-                  isIncome = mockCashflow[index]['isIncome'] ?? false;
-                } else {
-                  ExpenseItemClass? item = expenseTodayBox.getAt(index);
-                  category = item!.category;
-                  type = item.type;
-                  price = item.price;
-                  isIncome = false; // Real data defaults to expense
-                }
+                String category = item.category;
+                String type = item.type;
+                String price = item.price;
+                bool isIncome = category == 'Income';
 
                 return Padding(
                   padding: EdgeInsets.only(
@@ -260,15 +175,15 @@ class _ExpenseContainer extends State<ExpenseContainer> {
                         decoration: BoxDecoration(
                           color: isIncome
                               ? Color.fromRGBO(34, 139, 34, 0.1)
-                              : Colors.red.withOpacity(0.1),
+                              : getCategoryColor(category).withOpacity(0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
-                          isIncome ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                          isIncome ? Icons.trending_up_rounded : getCategoryIcon(category),
                           size: screenWidth * 0.06,
                           color: isIncome
                               ? Color.fromRGBO(34, 139, 34, 1)
-                              : Colors.red[400],
+                              : getCategoryColor(category),
                         ),
                       ),
                       SizedBox(width: screenWidth * 0.04),

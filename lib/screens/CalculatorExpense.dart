@@ -7,7 +7,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:math';
 
 class CalculatorExpensePage extends StatefulWidget {
-  const CalculatorExpensePage({super.key});
+  final String? initialAccount;
+
+  const CalculatorExpensePage({super.key, this.initialAccount});
 
   @override
   State<CalculatorExpensePage> createState() => _CalculatorExpensePageState();
@@ -21,15 +23,26 @@ class _CalculatorExpensePageState extends State<CalculatorExpensePage> {
   String _transactionType = 'expense'; // 'expense', 'income', 'transfer'
 
   String selectedCategory = 'Food & Drinks';
-  String selectedAccount = 'Cash';
+  late String selectedAccount;
   String selectedAccountTo = 'GCash';
   final TextEditingController _descriptionController = TextEditingController();
 
-  final List<String> accounts = [
-    'Cash',
-    'GCash',
-    'Bank',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    List<String> accountNames = _getAccountNames();
+    selectedAccount = widget.initialAccount ?? (accountNames.isNotEmpty ? accountNames.first : 'Cash');
+    selectedAccountTo = accountNames.length > 1 ? accountNames[1] : (accountNames.isNotEmpty ? accountNames.first : 'Cash');
+  }
+
+  List<String> _getAccountNames() {
+    List<dynamic> stored = Hive.box('Budget').get('accounts', defaultValue: [
+      {'name': 'Cash', 'accNo': '', 'balance': 0.0}
+    ]);
+    return stored.map((e) => (e as Map)['name'] as String).toList();
+  }
+
+  List<String> get accounts => _getAccountNames();
 
   final List<String> categories = [
     'Food & Drinks',
@@ -398,6 +411,23 @@ class _CalculatorExpensePageState extends State<CalculatorExpensePage> {
     );
   }
 
+  void _updateAccountBalance(String accountName, double amount, bool isAdd) {
+    List<dynamic> stored = box.get('accounts', defaultValue: [
+      {'name': 'Cash', 'accNo': '', 'balance': 0.0}
+    ]);
+    List<Map<String, dynamic>> accounts = stored.map((e) => Map<String, dynamic>.from(e)).toList();
+
+    for (int i = 0; i < accounts.length; i++) {
+      if (accounts[i]['name'] == accountName) {
+        double currentBalance = (accounts[i]['balance'] as num).toDouble();
+        accounts[i]['balance'] = isAdd ? currentBalance + amount : currentBalance - amount;
+        break;
+      }
+    }
+
+    box.put('accounts', accounts);
+  }
+
   void _saveExpense() {
     double amount = double.tryParse(_display) ?? 0;
     if (amount <= 0) {
@@ -408,35 +438,42 @@ class _CalculatorExpensePageState extends State<CalculatorExpensePage> {
     }
 
     DateTime today = DateTime.now();
-    String dateStr = "${today.month}-${today.day}-${today.year}";
+    String dateStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
     String description = _descriptionController.text.isEmpty
         ? selectedCategory
         : _descriptionController.text;
 
-    // Save to Hive boxes
-    expenseTodayBox.put(
-      "key_${generateKey(15)}",
-      ExpenseItemClass(dateStr, selectedCategory, description, _display),
-    );
-    expenseTodayHistoryBox.put(
-      "key_${generateKey(15)}",
-      ExpenseItemClass(dateStr, selectedCategory, description, _display),
-    );
+    // Save to Hive boxes (not for transfers)
+    if (_transactionType != 'transfer') {
+      String category = _transactionType == 'income' ? 'Income' : selectedCategory;
+      expenseTodayBox.put(
+        "key_${generateKey(15)}",
+        ExpenseItemClass(dateStr, category, description, _display),
+      );
+      expenseTodayHistoryBox.put(
+        "key_${generateKey(15)}",
+        ExpenseItemClass(dateStr, category, description, _display),
+      );
+    }
 
     // Update budget
     double currentBudget = box.get("RecBudgetToday", defaultValue: 0.0);
-    double totalBudget = box.get("TotalBudget", defaultValue: 0.0);
     double totalExpensesWeek = box.get("TotalExpensesWeek", defaultValue: 0.0);
 
     if (_transactionType == 'income') {
+      // Add to account balance
+      _updateAccountBalance(selectedAccount, amount, true);
       box.put("RecBudgetToday", currentBudget + amount);
-      box.put("TotalBudget", totalBudget + amount);
     } else if (_transactionType == 'expense') {
+      // Subtract from account balance
+      _updateAccountBalance(selectedAccount, amount, false);
       box.put("RecBudgetToday", currentBudget - amount);
-      box.put("TotalBudget", totalBudget - amount);
       box.put("TotalExpensesWeek", totalExpensesWeek + amount);
+    } else if (_transactionType == 'transfer') {
+      // Subtract from source, add to destination
+      _updateAccountBalance(selectedAccount, amount, false);
+      _updateAccountBalance(selectedAccountTo, amount, true);
     }
-    // Transfer doesn't affect budget totals, just moves between accounts
 
     Navigator.pop(context);
   }

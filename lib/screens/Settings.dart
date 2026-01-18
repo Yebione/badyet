@@ -1,5 +1,7 @@
+import 'package:badyet/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -7,10 +9,18 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool isDarkModeEnabled = false;
+  late bool isDarkModeEnabled;
+
+  @override
+  void initState() {
+    super.initState();
+    isDarkModeEnabled = Hive.box('Budget').get('isDarkMode', defaultValue: false);
+  }
 
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(
@@ -25,7 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 IconButton(
                   icon: Icon(
                     Icons.arrow_back_ios,
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                   ),
                   onPressed: () {
                     Navigator.pop(context, true);
@@ -37,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 Text(
                   "Settings",
                   style: GoogleFonts.poppins(
-                      color: Colors.black,
+                      color: isDark ? Colors.white : Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       decoration: TextDecoration.none),
@@ -69,30 +79,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   buildSettingItem(
                     icon: Icons.brightness_4,
                     name: 'Dark Mode',
+                    isDark: isDark,
                     button: Switch(
                       value: isDarkModeEnabled,
+                      activeColor: Color.fromRGBO(52, 119, 216, 1),
                       onChanged: (value) {
                         setState(() {
                           isDarkModeEnabled = value;
                         });
-                        // snasndfsanfjan para mag itom
+                        MyApp.of(context)?.toggleDarkMode(value);
                       },
                     ),
                   ),
-                  SizedBox(
-                    height: screenWidth * 0.03,
-                  ),
-                  buildSettingItem(
-                      icon: Icons.info,
-                      name: 'About',
-                      button: IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/about',
-                            );
-                          },
-                          icon: Icon(Icons.arrow_forward))),
                 ],
               ),
             ),
@@ -104,10 +102,13 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 Widget buildSettingItem(
-    {required IconData icon, required String name, required Widget button}) {
+    {required IconData icon, required String name, required Widget button, required bool isDark}) {
   return ListTile(
-    leading: Icon(icon),
-    title: Text(name),
+    leading: Icon(icon, color: isDark ? Colors.white70 : Colors.black87),
+    title: Text(
+      name,
+      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+    ),
     trailing: button,
   );
 }

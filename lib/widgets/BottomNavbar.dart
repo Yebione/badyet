@@ -20,11 +20,11 @@ class BottomNavbar extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(
                   context,
-                  '/historytemp',
+                  '/analytics',
                 );
               },
               icon: Icon(
-                Icons.history,
+                Icons.analytics_outlined,
                 size: screenWidth * 0.07,
               )),
           SizedBox(
