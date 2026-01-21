@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class noExpense extends StatelessWidget {
-  const noExpense({super.key});
+class NoExpense extends StatelessWidget {
+  const NoExpense({super.key});
 
   @override
   Widget build(BuildContext context) {

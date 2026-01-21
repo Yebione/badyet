@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class AddExpenseButton extends StatelessWidget {
   final String? selectedAccount;
+  final DateTime? selectedDate;
 
-  const AddExpenseButton({super.key, this.selectedAccount});
+  const AddExpenseButton({super.key, this.selectedAccount, this.selectedDate});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,10 @@ class AddExpenseButton extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CalculatorExpensePage(initialAccount: selectedAccount),
+            builder: (context) => CalculatorExpensePage(
+              initialAccount: selectedAccount,
+              selectedDate: selectedDate,
+            ),
           ),
         );
       },

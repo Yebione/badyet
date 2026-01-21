@@ -12,12 +12,15 @@ class ExpenseItemClass {
   String type = "";
   @HiveField(3)
   String price = "0";
+  @HiveField(4)
+  String account = "";
 
-  ExpenseItemClass(this.date, this.category, this.type, this.price);
+  ExpenseItemClass(this.date, this.category, this.type, this.price, this.account);
   ExpenseItemClass.empty() {
     date = "";
     category = "";
     type = "";
     price = "0";
+    account = "";
   }
 }

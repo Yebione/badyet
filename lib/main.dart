@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.light,
         scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.poppinsTextTheme(
-          Theme.of(context).textTheme,
+          ThemeData.light().textTheme,
         ),
       ),
       darkTheme: ThemeData(

@@ -18,11 +18,18 @@ class badyetHome extends StatefulWidget {
 class _badyetHome extends State<badyetHome> {
   Set<int> selectedAccountIndices = {};
   List<Map<String, dynamic>> accountsList = [];
+  DateTime? selectedDate;
 
   void onAccountSelectionChanged(Set<int> selectedIndices, List<Map<String, dynamic>> accounts) {
     setState(() {
       selectedAccountIndices = selectedIndices;
       accountsList = accounts;
+    });
+  }
+
+  void onDateChanged(DateTime date) {
+    setState(() {
+      selectedDate = date;
     });
   }
 
@@ -54,11 +61,14 @@ class _badyetHome extends State<badyetHome> {
                         top: 70),
                     child: Column(
                       children: [
-                        header(),
+                        Header(
+                          selectedDate: selectedDate,
+                          onDateChanged: onDateChanged,
+                        ),
                         SizedBox(
                           height: 40,
                         ),
-                        RemBudget(),
+                        RemBudget(selectedDate: selectedDate),
                         SizedBox(
                           height: 20,
                         ),
@@ -66,7 +76,10 @@ class _badyetHome extends State<badyetHome> {
                         SizedBox(
                           height: 20,
                         ),
-                        decider == 1 ? noExpense() : ExpenseContainer(selectedAccountNames: getSelectedAccountNames()),
+                        decider == 1 ? NoExpense() : ExpenseContainer(
+                          selectedAccountNames: getSelectedAccountNames(),
+                          selectedDate: selectedDate,
+                        ),
                       ],
                     ),
                   ),
@@ -81,6 +94,7 @@ class _badyetHome extends State<badyetHome> {
         selectedAccount: selectedAccountIndices.length == 1 && accountsList.isNotEmpty
             ? accountsList[selectedAccountIndices.first]['name']
             : null,
+        selectedDate: selectedDate,
       ),
       bottomNavigationBar: BottomNavbar(),
     );
