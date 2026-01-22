@@ -5,6 +5,8 @@ import 'package:badyet/widgets/AddButton.dart';
 import 'package:badyet/widgets/BottomNavbar.dart';
 import 'package:badyet/widgets/noExpense.dart';
 import 'package:badyet/widgets/Accounts.dart';
+import 'package:badyet/widgets/WelcomeModal.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:flutter/material.dart';
 
@@ -39,6 +41,20 @@ class _badyetHome extends State<badyetHome> {
         .where((i) => i < accountsList.length)
         .map((i) => accountsList[i]['name'] as String)
         .toList();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Check if welcome modal should be shown on first launch
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final box = Hive.box('Budget');
+      bool hasSeenWelcome = box.get('hasSeenWelcome', defaultValue: false);
+      if (!hasSeenWelcome) {
+        WelcomeModal.showWelcomeModal(context);
+        box.put('hasSeenWelcome', true);
+      }
+    });
   }
 
   @override

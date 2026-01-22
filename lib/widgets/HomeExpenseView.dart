@@ -16,6 +16,535 @@ class ExpenseContainer extends StatefulWidget {
 }
 
 class _ExpenseContainer extends State<ExpenseContainer> {
+  final box = Hive.box('Budget');
+
+  List<String> get categories {
+    List<dynamic> stored = box.get('categories', defaultValue: [
+      'Income',
+      'Food & Drinks',
+      'Bills & Subscription',
+      'Vehicle',
+      'Luxury - Shopping',
+      'Luxury - Social',
+      'Others'
+    ]);
+    return stored.cast<String>();
+  }
+
+  List<String> get accounts {
+    List<dynamic> stored = box.get('accounts', defaultValue: [
+      {'name': 'Cash', 'accNo': '', 'balance': 0.0}
+    ]);
+    return stored.map((e) => (e as Map)['name'] as String).toList();
+  }
+
+  void _updateExpenseItem(ExpenseItemClass oldItem, ExpenseItemClass newItem) {
+    DateTime targetDate = widget.selectedDate ?? DateTime.now();
+    bool isToday = targetDate.year == DateTime.now().year && 
+                   targetDate.month == DateTime.now().month && 
+                   targetDate.day == DateTime.now().day;
+
+    // Update in expenseTodayBox if it's today
+    if (isToday) {
+      for (var key in expenseTodayBox.keys) {
+        ExpenseItemClass? item = expenseTodayBox.get(key);
+        if (item != null &&
+            item.date == oldItem.date &&
+            item.category == oldItem.category &&
+            item.type == oldItem.type &&
+            item.price == oldItem.price &&
+            item.account == oldItem.account) {
+          expenseTodayBox.put(key, newItem);
+          break;
+        }
+      }
+    }
+
+    // Always update in expenseTodayHistoryBox
+    for (var key in expenseTodayHistoryBox.keys) {
+      ExpenseItemClass? item = expenseTodayHistoryBox.get(key);
+      if (item != null &&
+          item.date == oldItem.date &&
+          item.category == oldItem.category &&
+          item.type == oldItem.type &&
+          item.price == oldItem.price &&
+          item.account == oldItem.account) {
+        expenseTodayHistoryBox.put(key, newItem);
+        break;
+      }
+    }
+
+    // Budget will be recalculated automatically by RemBudget widget
+    // when it detects changes in the expense boxes
+  }
+
+  void _showEditExpenseModal(BuildContext context, ExpenseItemClass item) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    final descriptionController = TextEditingController(text: item.type);
+    final priceController = TextEditingController(text: item.price);
+    String selectedCategory = item.category;
+    String selectedAccount = item.account;
+    String selectedAccountTo = '';
+    
+    // For transfers, parse the "from -> to" format
+    if (item.category == 'Transfer' && item.type.contains('->')) {
+      List<String> parts = item.type.split('->');
+      if (parts.length == 2) {
+        selectedAccount = item.account; // Source account
+        selectedAccountTo = parts[1].trim(); // Destination account
+      }
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          final modalIsDark = Theme.of(context).brightness == Brightness.dark;
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.85,
+            decoration: BoxDecoration(
+              color: modalIsDark ? Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
+              ),
+            ),
+            child: Column(
+              children: [
+              SizedBox(height: screenWidth * 0.03),
+              Container(
+                width: screenWidth * 0.1,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: modalIsDark ? Colors.grey[700] : Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              SizedBox(height: screenWidth * 0.04),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Edit Transaction',
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.045,
+                        fontWeight: FontWeight.w600,
+                        color: modalIsDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: modalIsDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(screenWidth * 0.06),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Description
+                      Text(
+                        'Description',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.038,
+                          fontWeight: FontWeight.w500,
+                          color: modalIsDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: screenWidth * 0.02),
+                      TextField(
+                        controller: descriptionController,
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.035,
+                          color: modalIsDark ? Colors.white : Colors.black87,
+                        ),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: modalIsDark ? Colors.grey[800] : Colors.grey[100],
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: modalIsDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color.fromRGBO(52, 119, 216, 1),
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.04,
+                            vertical: screenWidth * 0.035,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: screenWidth * 0.04),
+
+                      // Price
+                      Text(
+                        'Amount',
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.038,
+                          fontWeight: FontWeight.w500,
+                          color: modalIsDark ? Colors.white : Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: screenWidth * 0.02),
+                      TextField(
+                        controller: priceController,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        style: GoogleFonts.poppins(
+                          fontSize: screenWidth * 0.035,
+                          color: modalIsDark ? Colors.white : Colors.black87,
+                        ),
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: modalIsDark ? Colors.grey[800] : Colors.grey[100],
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: modalIsDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: Color.fromRGBO(52, 119, 216, 1),
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.04,
+                            vertical: screenWidth * 0.035,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: screenWidth * 0.04),
+
+                      // Category (only if not Transfer or Income)
+                      if (item.category != 'Transfer' && item.category != 'Income') ...[
+                        Text(
+                          'Category',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.038,
+                            fontWeight: FontWeight.w500,
+                            color: modalIsDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.02),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: modalIsDark ? Colors.grey[800] : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: modalIsDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedCategory,
+                              isExpanded: true,
+                              dropdownColor: modalIsDark ? Color(0xFF1E1E1E) : Colors.white,
+                              style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.035,
+                                color: modalIsDark ? Colors.white : Colors.black87,
+                              ),
+                              items: categories
+                                  .where((cat) => cat != 'Income' && cat != 'Transfer')
+                                  .map((category) => DropdownMenuItem(
+                                        value: category,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: screenWidth * 0.04,
+                                          ),
+                                          child: Text(category),
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setModalState(() {
+                                    selectedCategory = value;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.04),
+                      ],
+
+                      // Account (for expenses and income)
+                      if (item.category != 'Transfer') ...[
+                        Text(
+                          'Account',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.038,
+                            fontWeight: FontWeight.w500,
+                            color: modalIsDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.02),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: modalIsDark ? Colors.grey[800] : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: modalIsDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedAccount.isEmpty && accounts.isNotEmpty
+                                  ? accounts.first
+                                  : selectedAccount,
+                              isExpanded: true,
+                              dropdownColor: modalIsDark ? Color(0xFF1E1E1E) : Colors.white,
+                              style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.035,
+                                color: modalIsDark ? Colors.white : Colors.black87,
+                              ),
+                              items: accounts.map((account) => DropdownMenuItem(
+                                    value: account,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: screenWidth * 0.04,
+                                      ),
+                                      child: Text(account),
+                                    ),
+                                  )).toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setModalState(() {
+                                    selectedAccount = value;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.04),
+                      ],
+
+                      // Transfer accounts (from -> to)
+                      if (item.category == 'Transfer') ...[
+                        Text(
+                          'From Account',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.038,
+                            fontWeight: FontWeight.w500,
+                            color: modalIsDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.02),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: modalIsDark ? Colors.grey[800] : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: modalIsDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedAccount.isEmpty && accounts.isNotEmpty
+                                  ? accounts.first
+                                  : selectedAccount,
+                              isExpanded: true,
+                              dropdownColor: modalIsDark ? Color(0xFF1E1E1E) : Colors.white,
+                              style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.035,
+                                color: modalIsDark ? Colors.white : Colors.black87,
+                              ),
+                              items: accounts.map((account) => DropdownMenuItem(
+                                    value: account,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: screenWidth * 0.04,
+                                      ),
+                                      child: Text(account),
+                                    ),
+                                  )).toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setModalState(() {
+                                    selectedAccount = value;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.04),
+                        Text(
+                          'To Account',
+                          style: GoogleFonts.poppins(
+                            fontSize: screenWidth * 0.038,
+                            fontWeight: FontWeight.w500,
+                            color: modalIsDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.02),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: modalIsDark ? Colors.grey[800] : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: modalIsDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              value: selectedAccountTo.isEmpty && accounts.isNotEmpty
+                                  ? accounts.first
+                                  : selectedAccountTo,
+                              isExpanded: true,
+                              dropdownColor: modalIsDark ? Color(0xFF1E1E1E) : Colors.white,
+                              style: GoogleFonts.poppins(
+                                fontSize: screenWidth * 0.035,
+                                color: modalIsDark ? Colors.white : Colors.black87,
+                              ),
+                              items: accounts.map((account) => DropdownMenuItem(
+                                    value: account,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: screenWidth * 0.04,
+                                      ),
+                                      child: Text(account),
+                                    ),
+                                  )).toList(),
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setModalState(() {
+                                    selectedAccountTo = value;
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: screenWidth * 0.04),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(screenWidth * 0.06),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.035),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: modalIsDark ? Colors.grey[700]! : Colors.grey[300]!,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: GoogleFonts.poppins(
+                            color: modalIsDark ? Colors.grey[400] : Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                            fontSize: screenWidth * 0.035,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: screenWidth * 0.03),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color.fromRGBO(52, 119, 216, 1),
+                              Color.fromRGBO(81, 218, 96, 1),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            String description = descriptionController.text.trim();
+                            String price = priceController.text.trim();
+                            
+                            if (description.isEmpty || price.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Please fill in all fields')),
+                              );
+                              return;
+                            }
+
+                            // Build the new item
+                            String newType = description;
+                            String newCategory = item.category;
+                            String newAccount = selectedAccount;
+                            
+                            // For transfers, update the type to include "from -> to"
+                            if (item.category == 'Transfer') {
+                              newType = '$selectedAccount -> $selectedAccountTo';
+                            } else if (item.category != 'Transfer' && item.category != 'Income') {
+                              // Allow category change for expenses
+                              newCategory = selectedCategory;
+                            }
+
+                            ExpenseItemClass updatedItem = ExpenseItemClass(
+                              item.date,
+                              newCategory,
+                              newType,
+                              price,
+                              newAccount,
+                            );
+
+                            _updateExpenseItem(item, updatedItem);
+                            Navigator.pop(context);
+                            setState(() {}); // Refresh the UI
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: screenWidth * 0.035),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            'Save',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: screenWidth * 0.035,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+        },
+      ),
+    );
+  }
+
   bool _matchesDate(String itemDate, DateTime targetDate) {
     try {
       DateTime date;
@@ -295,9 +824,11 @@ class _ExpenseContainer extends State<ExpenseContainer> {
                     top: index == 0 ? 0 : screenWidth * 0.035,
                     bottom: screenWidth * 0.035,
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                  child: GestureDetector(
+                    onTap: () => _showEditExpenseModal(context, item),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
                       Container(
                         padding: EdgeInsets.all(screenWidth * 0.025),
                         decoration: BoxDecoration(
@@ -354,6 +885,7 @@ class _ExpenseContainer extends State<ExpenseContainer> {
                         ),
                       ),
                     ],
+                    ),
                   ),
                 );
               },

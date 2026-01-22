@@ -39,6 +39,11 @@ class _CalculatorExpensePageState extends State<CalculatorExpensePage> {
     selectedAccountTo = accountNames.length > 1
         ? accountNames[1]
         : (accountNames.isNotEmpty ? accountNames.first : 'Cash');
+    
+    // Ensure selectedCategory is valid (exists in expense categories)
+    if (!expenseCategories.contains(selectedCategory) && expenseCategories.isNotEmpty) {
+      selectedCategory = expenseCategories.first;
+    }
   }
 
   List<String> _getAccountNames() {
@@ -65,6 +70,11 @@ class _CalculatorExpensePageState extends State<CalculatorExpensePage> {
     List<dynamic> stored =
         box.get('categories', defaultValue: defaultCategories);
     return stored.cast<String>();
+  }
+
+  // Get categories for expense selection (excludes Transfer only)
+  List<String> get expenseCategories {
+    return categories.where((cat) => cat != 'Transfer').toList();
   }
 
   String generateKey(int len) {
@@ -345,92 +355,104 @@ class _CalculatorExpensePageState extends State<CalculatorExpensePage> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: isDark ? Color(0xFF1E1E1E) : Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: screenWidth * 0.03),
-            Container(
-              width: screenWidth * 0.1,
-              height: 4,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey[700] : Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            SizedBox(height: screenWidth * 0.04),
-            Text(
-              'Select Category',
-              style: GoogleFonts.poppins(
-                fontSize: screenWidth * 0.045,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-            ),
-            SizedBox(height: screenWidth * 0.02),
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  final isSelected = category == selectedCategory;
+      builder: (context) => ValueListenableBuilder<Box>(
+        valueListenable: box.listenable(),
+        builder: (context, box, _) {
+          // Get fresh categories from Hive
+          List<dynamic> stored = box.get('categories', defaultValue: defaultCategories);
+          List<String> currentCategories = stored.cast<String>();
+          List<String> currentExpenseCategories = currentCategories
+              .where((cat) => cat != 'Transfer')
+              .toList();
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedCategory = category;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * 0.06,
-                        vertical: screenWidth * 0.04,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? (isDark ? Colors.grey[800] : Colors.grey[100])
-                            : Colors.transparent,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            category,
-                            style: GoogleFonts.poppins(
-                              fontSize: screenWidth * 0.04,
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.w400,
-                              color: isSelected
-                                  ? Color.fromRGBO(52, 119, 216, 1)
-                                  : (isDark ? Colors.white : Colors.black87),
-                            ),
-                          ),
-                          if (isSelected)
-                            Icon(
-                              Icons.check_rounded,
-                              color: Color.fromRGBO(52, 119, 216, 1),
-                              size: screenWidth * 0.05,
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+          return Container(
+            decoration: BoxDecoration(
+              color: isDark ? Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
               ),
             ),
-            SizedBox(height: screenWidth * 0.04),
-          ],
-        ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: screenWidth * 0.03),
+                Container(
+                  width: screenWidth * 0.1,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey[700] : Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                SizedBox(height: screenWidth * 0.04),
+                Text(
+                  'Select Category',
+                  style: GoogleFonts.poppins(
+                    fontSize: screenWidth * 0.045,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                SizedBox(height: screenWidth * 0.02),
+                Flexible(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: currentExpenseCategories.length,
+                    itemBuilder: (context, index) {
+                      final category = currentExpenseCategories[index];
+                      final isSelected = category == selectedCategory;
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = category;
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.06,
+                            vertical: screenWidth * 0.04,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? (isDark ? Colors.grey[800] : Colors.grey[100])
+                                : Colors.transparent,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                category,
+                                style: GoogleFonts.poppins(
+                                  fontSize: screenWidth * 0.04,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                  color: isSelected
+                                      ? Color.fromRGBO(52, 119, 216, 1)
+                                      : (isDark ? Colors.white : Colors.black87),
+                                ),
+                              ),
+                              if (isSelected)
+                                Icon(
+                                  Icons.check_rounded,
+                                  color: Color.fromRGBO(52, 119, 216, 1),
+                                  size: screenWidth * 0.05,
+                                ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: screenWidth * 0.04),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

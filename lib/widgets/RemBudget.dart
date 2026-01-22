@@ -108,6 +108,19 @@ class _RemBudget extends State<RemBudget> {
     return box.get("LuxuryBudget", defaultValue: 0.0);
   }
 
+  double getOriginalLuxuryBudget() {
+    double original = box.get("OriginalLuxuryBudget", defaultValue: 0.0);
+    // If OriginalLuxuryBudget is not set, use current LuxuryBudget as fallback
+    // This should only happen on first load before budget is set
+    if (original == 0.0) {
+      double current = getLuxuryBudget();
+      // Only use current as original if it's greater than 0 and hasn't been spent
+      // This is a fallback for cases where OriginalLuxuryBudget wasn't initialized
+      return current > 0 ? current : 0.0;
+    }
+    return original;
+  }
+
   double getTotalExpenses() {
     return box.get("TotalExpensesWeek", defaultValue: 0.0);
   }
@@ -257,12 +270,11 @@ class _RemBudget extends State<RemBudget> {
 
   void showEditBudgetModal(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Pre-fill with current values
-    monthBudgetController.text =
-        getMonthBudget() > 0 ? getMonthBudget().round().toString() : '';
-    luxuryBudgetController.text =
-        getLuxuryBudget() > 0 ? getLuxuryBudget().round().toString() : '';
+    monthBudgetController.text = getMonthBudget().round().toString();
+    luxuryBudgetController.text = getLuxuryBudget().round().toString();
 
     showDialog(
       context: context,
@@ -272,7 +284,7 @@ class _RemBudget extends State<RemBudget> {
         insetPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? Color(0xFF1E1E1E) : Colors.white,
             borderRadius: BorderRadius.circular(24),
           ),
           child: Padding(
@@ -285,6 +297,7 @@ class _RemBudget extends State<RemBudget> {
                   style: GoogleFonts.poppins(
                     fontSize: screenWidth * 0.045,
                     fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 SizedBox(height: screenWidth * 0.05),
@@ -298,18 +311,21 @@ class _RemBudget extends State<RemBudget> {
                       style: GoogleFonts.poppins(
                         fontSize: screenWidth * 0.035,
                         fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
+                        color: isDark ? Colors.grey[400] : Colors.grey[700],
                       ),
                     ),
                     SizedBox(height: screenWidth * 0.02),
                     TextField(
                       controller: monthBudgetController,
                       keyboardType: TextInputType.number,
-                      style: GoogleFonts.poppins(fontSize: screenWidth * 0.04),
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.04,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Enter amount',
                         hintStyle: GoogleFonts.poppins(
-                          color: Colors.grey[400],
+                          color: isDark ? Colors.grey[500] : Colors.grey[400],
                           fontSize: screenWidth * 0.04,
                         ),
                         prefixIcon: Padding(
@@ -319,7 +335,7 @@ class _RemBudget extends State<RemBudget> {
                           child: Text(
                             'P',
                             style: GoogleFonts.poppins(
-                              color: Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                               fontSize: screenWidth * 0.04,
                             ),
                           ),
@@ -327,7 +343,7 @@ class _RemBudget extends State<RemBudget> {
                         prefixIconConstraints:
                             BoxConstraints(minWidth: 0, minHeight: 0),
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -352,18 +368,21 @@ class _RemBudget extends State<RemBudget> {
                       style: GoogleFonts.poppins(
                         fontSize: screenWidth * 0.035,
                         fontWeight: FontWeight.w500,
-                        color: Colors.grey[700],
+                        color: isDark ? Colors.grey[400] : Colors.grey[700],
                       ),
                     ),
                     SizedBox(height: screenWidth * 0.02),
                     TextField(
                       controller: luxuryBudgetController,
                       keyboardType: TextInputType.number,
-                      style: GoogleFonts.poppins(fontSize: screenWidth * 0.04),
+                      style: GoogleFonts.poppins(
+                        fontSize: screenWidth * 0.04,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Enter amount',
                         hintStyle: GoogleFonts.poppins(
-                          color: Colors.grey[400],
+                          color: isDark ? Colors.grey[500] : Colors.grey[400],
                           fontSize: screenWidth * 0.04,
                         ),
                         prefixIcon: Padding(
@@ -373,7 +392,7 @@ class _RemBudget extends State<RemBudget> {
                           child: Text(
                             'P',
                             style: GoogleFonts.poppins(
-                              color: Colors.black87,
+                              color: isDark ? Colors.white : Colors.black87,
                               fontSize: screenWidth * 0.04,
                             ),
                           ),
@@ -381,7 +400,7 @@ class _RemBudget extends State<RemBudget> {
                         prefixIconConstraints:
                             BoxConstraints(minWidth: 0, minHeight: 0),
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: isDark ? Colors.grey[800] : Colors.grey[100],
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -445,9 +464,11 @@ class _RemBudget extends State<RemBudget> {
     if (savedMonth == "null") {
       saveMonthToday(currentMonth);
       // Store original luxury budget on first load if not already set
-      if (box.get("OriginalLuxuryBudget", defaultValue: null) == null) {
+      double originalLuxury = box.get("OriginalLuxuryBudget", defaultValue: 0.0);
+      if (originalLuxury == 0.0) {
         double currentLuxury = getLuxuryBudget();
         if (currentLuxury > 0) {
+          // Set original to current (assuming it hasn't been spent yet on first load)
           box.put("OriginalLuxuryBudget", currentLuxury);
         }
       }
@@ -657,7 +678,7 @@ class _RemBudget extends State<RemBudget> {
                             ),
                           ),
                           Text(
-                            ' / ${box.get("OriginalLuxuryBudget", defaultValue: getLuxuryBudget()).round().toString()}',
+                            ' / ${getOriginalLuxuryBudget().round().toString()}',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.grey[500],

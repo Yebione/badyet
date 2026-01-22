@@ -2,6 +2,7 @@ import 'package:badyet/main.dart';
 import 'package:badyet/ExpenseItemClass.dart';
 import 'package:badyet/ExpensesTodayBox.dart';
 import 'package:badyet/ExpenseTodayHistoryBox.dart';
+import 'package:badyet/widgets/WelcomeModal.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -31,7 +32,6 @@ class _SettingsPageState extends State<SettingsPage> {
   final categoryController = TextEditingController();
 
   static const List<String> defaultCategories = [
-    'Income',
     'Food & Drinks',
     'Bills & Subscription',
     'Vehicle',
@@ -43,11 +43,25 @@ class _SettingsPageState extends State<SettingsPage> {
   List<String> get categories {
     List<dynamic> stored =
         box.get('categories', defaultValue: defaultCategories);
-    return stored.cast<String>();
+    List<String> cats = stored.cast<String>();
+    // Ensure "Income" appears before "Others" if both exist
+    if (cats.contains('Income') && cats.contains('Others')) {
+      cats.remove('Income');
+      int othersIndex = cats.indexOf('Others');
+      cats.insert(othersIndex, 'Income');
+    }
+    return cats;
   }
 
   void saveCategories(List<String> cats) {
-    box.put('categories', cats);
+    List<String> ordered = List.from(cats);
+    // Ensure "Income" appears before "Others" if both exist
+    if (ordered.contains('Income') && ordered.contains('Others')) {
+      ordered.remove('Income');
+      int othersIndex = ordered.indexOf('Others');
+      ordered.insert(othersIndex, 'Income');
+    }
+    box.put('categories', ordered);
   }
 
   Set<String> get luxuryCategories {
@@ -313,7 +327,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         String newCategory = categoryController.text.trim();
                         if (newCategory.isNotEmpty &&
                             !categories.contains(newCategory)) {
-                          List<String> updated = [...categories, newCategory];
+                          List<String> updated = List.from(categories);
+                          // If adding "Income" and "Others" exists, insert before "Others"
+                          if (newCategory == 'Income' && updated.contains('Others')) {
+                            int othersIndex = updated.indexOf('Others');
+                            updated.insert(othersIndex, newCategory);
+                          } else {
+                            updated.add(newCategory);
+                          }
                           saveCategories(updated);
                           categoryController.clear();
                           setModalState(() {});
@@ -560,74 +581,74 @@ class _SettingsPageState extends State<SettingsPage> {
                           GestureDetector(
                             onTap: () {
                               // Confirm delete
-                              showDialog(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                  backgroundColor:
-                                      isDark ? Color(0xFF1E1E1E) : Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  title: Text(
-                                    'Delete Category',
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w600,
-                                      color: isDark
-                                          ? Colors.white
-                                          : Colors.black87,
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    backgroundColor:
+                                        isDark ? Color(0xFF1E1E1E) : Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                  ),
-                                  content: Text(
-                                    'Are you sure you want to delete "$category"?',
-                                    style: GoogleFonts.poppins(
-                                      color: isDark
-                                          ? Colors.grey[400]
-                                          : Colors.grey[600],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(ctx),
-                                      child: Text(
-                                        'Cancel',
-                                        style: GoogleFonts.poppins(
-                                          color: isDark
-                                              ? Colors.grey[400]
-                                              : Colors.grey[600],
-                                        ),
+                                    title: Text(
+                                      'Delete Category',
+                                      style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black87,
                                       ),
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        bool wasLuxury =
-                                            isLuxuryCategory(category);
-                                        List<String> updated = categories
-                                            .where((c) => c != category)
-                                            .toList();
-                                        saveCategories(updated);
-                                        // Also remove from luxury categories if it was luxury
-                                        if (wasLuxury) {
-                                          Set<String> updatedLuxury =
-                                              Set.from(luxuryCategories);
-                                          updatedLuxury.remove(category);
-                                          saveLuxuryCategories(updatedLuxury);
-                                        }
-                                        Navigator.pop(ctx);
-                                        setModalState(() {});
-                                        setState(() {});
-                                      },
-                                      child: Text(
-                                        'Delete',
-                                        style: GoogleFonts.poppins(
-                                          color: Colors.red[400],
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                    content: Text(
+                                      'Are you sure you want to delete "$category"?',
+                                      style: GoogleFonts.poppins(
+                                        color: isDark
+                                            ? Colors.grey[400]
+                                            : Colors.grey[600],
                                       ),
                                     ),
-                                  ],
-                                ),
-                              );
-                            },
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(ctx),
+                                        child: Text(
+                                          'Cancel',
+                                          style: GoogleFonts.poppins(
+                                            color: isDark
+                                                ? Colors.grey[400]
+                                                : Colors.grey[600],
+                                          ),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          bool wasLuxury =
+                                              isLuxuryCategory(category);
+                                          List<String> updated = categories
+                                              .where((c) => c != category)
+                                              .toList();
+                                          saveCategories(updated);
+                                          // Also remove from luxury categories if it was luxury
+                                          if (wasLuxury) {
+                                            Set<String> updatedLuxury =
+                                                Set.from(luxuryCategories);
+                                            updatedLuxury.remove(category);
+                                            saveLuxuryCategories(updatedLuxury);
+                                          }
+                                          Navigator.pop(ctx);
+                                          setModalState(() {});
+                                          setState(() {});
+                                        },
+                                        child: Text(
+                                          'Delete',
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.red[400],
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             child: Icon(
                               Icons.delete_outline_rounded,
                               color: Colors.red[400],
@@ -752,6 +773,24 @@ class _SettingsPageState extends State<SettingsPage> {
                       color: isDark ? Colors.grey[400] : Colors.grey[600],
                     ),
                     onTap: () => showSetLuxuryCategoriesModal(context),
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      Icons.help_outline_rounded,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                    title: Text(
+                      'Help',
+                      style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right_rounded,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                    onTap: () {
+                      WelcomeModal.showWelcomeModal(context);
+                    },
                   ),
                 ],
               ),
