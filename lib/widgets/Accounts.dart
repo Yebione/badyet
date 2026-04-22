@@ -805,13 +805,31 @@ class _AccountsState extends State<Accounts> {
                                 color: isDark ? Colors.white : Colors.black87,
                               ),
                             ),
-                            Text(
-                              'P ${(account['balance'] as num).toStringAsFixed(0)}',
-                              style: GoogleFonts.poppins(
-                                fontSize: screenWidth * 0.032,
-                                color: isDark
-                                    ? Colors.grey[400]
-                                    : Colors.grey[600],
+                            if (account['accNo'] != null &&
+                                account['accNo'].toString().trim().isNotEmpty)
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(top: screenWidth * 0.01),
+                                child: Text(
+                                  account['accNo'].toString(),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: screenWidth * 0.03,
+                                    color: isDark
+                                        ? Colors.grey[500]
+                                        : Colors.grey[600],
+                                  ),
+                                ),
+                              ),
+                            Padding(
+                              padding: EdgeInsets.only(top: screenWidth * 0.01),
+                              child: Text(
+                                'P ${(account['balance'] as num).toStringAsFixed(0)}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: screenWidth * 0.032,
+                                  color: isDark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
+                                ),
                               ),
                             ),
                           ],
